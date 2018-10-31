@@ -1,0 +1,13 @@
+{
+    "name": "com.hwaet.projectCloner",
+    "displayName": "Project Cloner",
+    "version": "0.0.1",
+    "unity": "2018.2",
+    "description": "A tool to let the user quickly clone their project, for multiplayer testing.",
+    "keywords": [
+        "multiplayer",
+        "unity",
+		"editor"
+    ],
+    "category": "Unity"
+}
