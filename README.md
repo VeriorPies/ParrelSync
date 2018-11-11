@@ -10,7 +10,7 @@ There's a couple ways you can add this to a unity project:
 1. Place this code anywhere in your project!
 2. Check this project out somewhere else and point to it with your unity package manifest:
 ```"com.hwaet.projectcloner":  "file:../../../../[relative path from your manifest file to the package.json]"```
-3. If you've got git installed on your machine, add a line in your package manifest that points straight here!
+3. If you've got git installed on your machine, (and unity is > 2018.3.0b7) add a line in your package manifest that points straight here!
 ```"com.hwaet.projectcloner": "https://github.com/hwaet/UnityProjectCloner.git"```
 
 # Where?
