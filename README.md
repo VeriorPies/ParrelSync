@@ -1,4 +1,4 @@
-![demo](https://user-images.githubusercontent.com/30280876/47701678-00186480-dbf1-11e8-8725-e4cb430ad479.gif)
+![cloner](https://user-images.githubusercontent.com/30280876/48310703-37780100-e561-11e8-8319-0ecbaeb8c8e4.gif)
 # UnityProjectCloner
 A tool to let the user quickly clone their project, for multiplayer testing
 
