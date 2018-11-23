@@ -18,16 +18,20 @@ namespace UnityProjectCloner
 			Debug.Log("Start project:\n" + currentProject);
 			Debug.Log("Clone project:\n" + nextProject);
 
+
 			ProjectCloner.CreateProjectFolder(nextProject);
 			ProjectCloner.CopyLibrary(currentProject, nextProject);
 
 			ProjectCloner.linkFolders(currentProject.assetPath, nextProject.assetPath);
 			ProjectCloner.linkFolders(currentProject.projectSettingsPath, nextProject.projectSettingsPath);
 			ProjectCloner.linkFolders(currentProject.packagesPath, nextProject.packagesPath);
+			ProjectCloner.linkFolders(currentProject.autoBuildPath, nextProject.autoBuildPath);
 		}
 
 		//TODO make a nice GUI editorwindow to manage/delete the clone
 
 		//TODO add support for multiple clones
 	}
+
+	
 }

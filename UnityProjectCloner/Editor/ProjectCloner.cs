@@ -44,7 +44,7 @@ namespace UnityProjectCloner
 
 			//if (System.IO.Directory.Exists(path) == false)
 			//{
-			Debug.Log("creating new folder at: " + path);
+			Debug.Log("Creating new empty folder at: " + path);
 			System.IO.Directory.CreateDirectory(path);
 			//}
 			//else
@@ -63,13 +63,19 @@ namespace UnityProjectCloner
 		{
 			if (System.IO.Directory.Exists(destinationProject.libraryPath) == false)
 			{
-				Debug.Log("Copying Library data to " + destinationProject.libraryPath);
+				Debug.Log("Library copy: " + destinationProject.libraryPath);
 				FileUtil.CopyFileOrDirectory(sourceProject.libraryPath, destinationProject.libraryPath);
 			}
 			else
 			{
-				Debug.LogWarning("Library path already exists: " + destinationProject.libraryPath);
+				Debug.LogWarning("LIBRARY COPY: detination path already exists! ");
 			}
+			
+		}
+
+		void OnGUI()
+		{
+
 		}
 
 
@@ -80,7 +86,7 @@ namespace UnityProjectCloner
 		/// <param name="destinationPath"></param>
 		public static void linkFolders(string sourcePath, string destinationPath)
 		{
-			if (System.IO.Directory.Exists(destinationPath) == false)
+			if ((System.IO.Directory.Exists(destinationPath) == false) && (System.IO.Directory.Exists(sourcePath) == true))
 			{
 				switch (Application.platform)
 				{
@@ -108,7 +114,7 @@ namespace UnityProjectCloner
 		private static void createLinkWin(string sourcePath, string destinationPath)
 		{
 			string cmd = "/C mklink /J " + string.Format("\"{0}\" \"{1}\"", destinationPath, sourcePath);
-			Debug.Log("Windows hard link " + cmd);
+			Debug.Log("Windows junction: " + cmd);
 
 			System.Diagnostics.Process process = new System.Diagnostics.Process();
 			System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
@@ -122,6 +128,7 @@ namespace UnityProjectCloner
 
 		private static void createLinkMac(string sourcePath, string destinationPath)
 		{
+			Debug.LogWarning("This hasn't been tested yet! I am mac-less :( Please chime in on the github if it works for you.");
 			string cmd = "ln " + string.Format("\"{0}\" \"{1}\"", destinationPath, sourcePath);
 			Debug.Log("Mac hard link " + cmd);
 

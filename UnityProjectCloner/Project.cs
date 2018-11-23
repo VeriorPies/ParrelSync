@@ -15,6 +15,7 @@ namespace UnityProjectCloner
 		public string projectSettingsPath;
 		public string libraryPath;
 		public string packagesPath;
+		public string autoBuildPath;
 		char[] separator = new char[1] { '/' };
 
 
@@ -52,6 +53,7 @@ namespace UnityProjectCloner
 			newProject.name = name;
 			newProject.separator = separator;
 			newProject.packagesPath = packagesPath;
+			newProject.autoBuildPath = autoBuildPath;
 
 			return newProject;
 		}
@@ -80,6 +82,7 @@ namespace UnityProjectCloner
 								 assetPath + "\n" +
 								 projectSettingsPath + "\n" +
 								 packagesPath + "\n" +
+								 autoBuildPath + "\n" +
 								 libraryPath;
 			return (printString);
 		}
@@ -100,6 +103,7 @@ namespace UnityProjectCloner
 			projectSettingsPath = projectPath + "/ProjectSettings";
 			libraryPath = projectPath + "/Library";
 			packagesPath = projectPath + "/Packages";
+			autoBuildPath = projectPath + "/AutoBuild";
 
 		}
 	}
