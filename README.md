@@ -1,6 +1,6 @@
 ![cloner](https://user-images.githubusercontent.com/30280876/48310703-37780100-e561-11e8-8319-0ecbaeb8c8e4.gif)
 # UnityProjectCloner
-A tool to let the user quickly clone their project, for multiplayer testing
+A tool to let the user quickly duplicate their unity project *without copying all the assets*, for multiplayer testing
 
 # Why?
 One method of quickly debugging multiplayer code is to run multiple unity editors of the same project, and inspect each instance as it works its way through the server/client functions. This is disabled by design for a unity project because of file IO concerns, so this tool lets you get around that by cloning your unity project and creating a series of hard links/junctions in your new cloned folder. These links point back to the original, which can let you edit code and see the results fairly quickly in each cloned unity.
