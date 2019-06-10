@@ -8,7 +8,7 @@ One method of quickly debugging multiplayer code is to run multiple unity editor
 # How?
 There's a couple ways you can add this to a unity project:
 1. Place this code anywhere in your project!
-2. Check this project out somewhere else and point to it with your unity package manifest:
+2. Check this project out somewhere else and point to it with your Unity package manifest:
 ```"com.hwaet.projectcloner":  "file:../../../../[relative path from your manifest file to the package.json]"```
 3. If you've got git installed on your machine, (and unity is > 2018.3.0b7) add a line in your package manifest that points straight here!
 ```"com.hwaet.projectcloner": "https://github.com/hwaet/UnityProjectCloner.git"```
@@ -18,9 +18,9 @@ The new cloned project will be placed right next to the original. So your folder
 - Root/ProjectName
 - Root/ProjectName_clone
 
-Then just point the unity editor to the cloned folder and open it like a normal project folder. Since Unity Hub is the new recommended way to manage projects, you'd probably want to add the clone in there.
+To open the window which allows to create a clone and manage it, in Unity Editor go to "Tools/Project Cloner". After the clone is created, you can launch it from the same window ("Open clone project" button will appear there). No need to add the clone to Unity Hub or anywhere else.
 
 # Future Plans:
 - I'm currently using a terminal command to create the folder links instead of kernel32, and that would be much wiser. So that'll be implemented in future passes of this.
-- Mac and linux suport would be swell
-- A gui window for all the project clones would be nice, too. Currently this'll just do one clone, but it might be handy to be able to test multiple versions this way.
+- Mac and linux suport would be swell.
+- Add multiple clones management functionality to GUI window. Currently it is possible to just do one clone, but it might be handy to be able to test multiple versions this way.
