@@ -11,7 +11,7 @@ namespace UnityProjectCloner
     /// Provides Unity Editor window for ProjectCloner.
     /// </summary>
 	public class ProjectClonerWindow : EditorWindow
-	{
+    {
         /// <summary>
         /// True if currently open project is a clone.
         /// </summary>
@@ -21,11 +21,11 @@ namespace UnityProjectCloner
         }
 
         /// <summary>
-        /// Returns true if project clone exists or currently open project is a clone itself.
+        /// Returns true if project clone exists.
         /// </summary>
         public bool isCloneCreated
         {
-            get { return ProjectCloner.GetCloneProjectPath() != string.Empty; }
+            get { return ProjectCloner.GetCloneProjectsPath().Count >= 1; }
         }
 
         [MenuItem("Tools/Project Cloner")]
@@ -38,7 +38,8 @@ namespace UnityProjectCloner
 
         private void OnGUI()
         {
-            GUILayout.Label("Clone settings", EditorStyles.boldLabel);
+            //Have difficulty with naming
+            GUILayout.Label("Clones List", EditorStyles.boldLabel);
 
             if (isClone)
             {
@@ -50,14 +51,14 @@ namespace UnityProjectCloner
                     string thisProjectName = ProjectCloner.GetCurrentProject().name;
                     string supposedOriginalProjectName = ProjectCloner.GetCurrentProject().name.Replace("_clone", "");
                     EditorGUILayout.HelpBox(
-                        "This project is a clone, but the link to the original seems lost.\nYou have to manually open the original and create a new clone instead of this one.\nThe original project should have a name '" + supposedOriginalProjectName + "', if it was not changed.", 
+                        "This project is a clone, but the link to the original seems lost.\nYou have to manually open the original and create a new clone instead of this one.\nThe original project should have a name '" + supposedOriginalProjectName + "', if it was not changed.",
                         MessageType.Warning);
                 }
                 else
                 {
                     /// If original project is present, display some usage info.
                     EditorGUILayout.HelpBox(
-                        "This project is a clone of the project '" + Path.GetFileName(originalProjectPath) + "'.\nIf you want to make changes the project files or manage clones, please open the original project through Unity Hub.", 
+                        "This project is a clone of the project '" + Path.GetFileName(originalProjectPath) + "'.\nIf you want to make changes the project files or manage clones, please open the original project through Unity Hub.",
                         MessageType.Info);
                 }
             }
@@ -66,27 +67,39 @@ namespace UnityProjectCloner
                 /// If it is an original project...
                 if (isCloneCreated)
                 {
-                    /// If clone is created, we can either open it or delete it.
-                    string cloneProjectPath = ProjectCloner.GetCloneProjectPath();
-                    EditorGUILayout.TextField("Clone project path", cloneProjectPath, EditorStyles.textField);
-                    if (GUILayout.Button("Open clone project"))
+                    /// If clone(s) is created, we can either open it or delete it.
+                    var cloneProjectsPath = ProjectCloner.GetCloneProjectsPath();
+                    for (int i = 0; i < cloneProjectsPath.Count; i++)
                     {
-                        ProjectCloner.OpenProject(cloneProjectPath);
+                        string cloneProjectPath = cloneProjectsPath[i];
+                        EditorGUILayout.LabelField("Clone " + i);
+                        EditorGUILayout.TextField("Clone project path", cloneProjectPath, EditorStyles.textField);
+                        if (GUILayout.Button("Open clone project"))
+                        {
+                            ProjectCloner.OpenProject(cloneProjectPath);
+                        }
+
+                        if (GUILayout.Button("Delete clone(Coming Soon)"))
+                        {
+                            bool delete = EditorUtility.DisplayDialog(
+                                "Delete the clone?",
+                                "Are you sure you want to delete the clone project '" + ProjectCloner.GetCurrentProject().name + "_clone'? If so, you can always create a new clone from ProjectCloner window.",
+                                "Delete",
+                                "Cancel");
+                            if (delete)
+                            {
+                                // TODO: implement proper project deletion
+                                throw new System.NotImplementedException();
+                                ProjectCloner.DeleteClone();
+                            }
+                        }
                     }
 
-                    if (GUILayout.Button("Delete clone"))
+                    //Have difficulty with naming
+                    GUILayout.Label("Other", EditorStyles.boldLabel);
+                    if (GUILayout.Button("Create new clone"))
                     {
-                        bool delete = EditorUtility.DisplayDialog(
-                            "Delete the clone?", 
-                            "Are you sure you want to delete the clone project '" + ProjectCloner.GetCurrentProject().name + "_clone'? If so, you can always create a new clone from ProjectCloner window.", 
-                            "Delete", 
-                            "Cancel");
-                        if (delete)
-                        {
-                            // TODO: implement proper project deletion
-                            throw new System.NotImplementedException();
-                            ProjectCloner.DeleteClone();
-                        }
+                        ProjectCloner.CreateCloneFromCurrent();
                     }
                 }
                 else
