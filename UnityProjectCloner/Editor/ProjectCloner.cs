@@ -137,38 +137,33 @@ namespace UnityProjectCloner
         /// <summary>
         /// Deletes the clone of the currently open project, if such exists.
         /// </summary>
-        public static void DeleteClone()
+        public static void DeleteClone(string cloneProjectPath)
         {
             /// Clone won't be able to delete itself.
             if (ProjectCloner.IsClone()) return;
 
-            //Temporary set to null
-            string cloneProjectPath = null;//= ProjectCloner.GetCloneProjectsPath();
-
             ///Extra precautions.
             if (cloneProjectPath == string.Empty) return;
             if (cloneProjectPath == ProjectCloner.GetOriginalProjectPath()) return;
-            if (cloneProjectPath.EndsWith(ProjectCloner.CloneNameSuffix)) return;
 
-            /// Delete the clone project folder.
-            throw new System.NotImplementedException();
-            // TODO: implement proper project deletion;
-            //       appears that using FileUtil.DeleteFileOrDirectory(...) on symlinks affects the contents of linked folders
-            //       (because this script self-deleted itself and half of the Assets folder when I tested it :D)
-            //       there must be another, safe method to delete the clone folder and symlinks without touching the original
+            //Check what OS is
+            switch (Application.platform)
             {
-                /*
-                EditorUtility.DisplayProgressBar("Deleting clone...", "Deleting '" + ProjectCloner.GetCloneProjectPath() + "'", 0f);
-                try
-                {
-                     FileUtil.DeleteFileOrDirectory(cloneProjectPath);
-                }
-                catch (IOException)
-                {
-                     EditorUtility.DisplayDialog("Could not delete clone", "'" + ProjectCloner.GetCurrentProject().name + "_clone' may be currently open in another unity Editor. Please close it and try again.", "OK");
-                }
-                EditorUtility.ClearProgressBar();
-                */
+                case (RuntimePlatform.WindowsEditor):
+                    Debug.Log("Attempting to delete folder \"" + cloneProjectPath + "\"");
+                    string args = "/c " + @"rmdir /s/q " + string.Format("\"{0}\"", cloneProjectPath);
+                    StartHiddenConsoleProcess("cmd.exe", args);
+                   
+                    break;
+                case (RuntimePlatform.OSXEditor):
+                    throw new System.NotImplementedException("No Mac function implement yet :(");
+                    break;
+                case (RuntimePlatform.LinuxEditor):
+                    throw new System.NotImplementedException("No linux support yet :(");
+                    break;
+                default:
+                    Debug.LogWarning("Not in a known editor. Where are you!?");
+                    break;
             }
         }
         #endregion

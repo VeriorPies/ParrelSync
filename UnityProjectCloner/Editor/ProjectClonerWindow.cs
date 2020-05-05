@@ -79,7 +79,7 @@ namespace UnityProjectCloner
                             ProjectCloner.OpenProject(cloneProjectPath);
                         }
 
-                        if (GUILayout.Button("Delete clone(Coming Soon)"))
+                        if (GUILayout.Button("Delete"))
                         {
                             bool delete = EditorUtility.DisplayDialog(
                                 "Delete the clone?",
@@ -88,9 +88,7 @@ namespace UnityProjectCloner
                                 "Cancel");
                             if (delete)
                             {
-                                // TODO: implement proper project deletion
-                                throw new System.NotImplementedException();
-                                ProjectCloner.DeleteClone();
+                                ProjectCloner.DeleteClone(cloneProjectPath);
                             }
                         }
                     }
