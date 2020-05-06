@@ -38,9 +38,6 @@ namespace UnityProjectCloner
 
         private void OnGUI()
         {
-            //Have difficulty with naming
-            GUILayout.Label("Clones List", EditorStyles.boldLabel);
-
             if (isClone)
             {
                 /// If it is a clone project...
@@ -67,18 +64,22 @@ namespace UnityProjectCloner
                 /// If it is an original project...
                 if (isCloneCreated)
                 {
+                    GUILayout.BeginVertical("HelpBox");
+                    GUILayout.Label("Clones of this Project");
                     /// If clone(s) is created, we can either open it or delete it.
                     var cloneProjectsPath = ProjectCloner.GetCloneProjectsPath();
                     for (int i = 0; i < cloneProjectsPath.Count; i++)
                     {
+                      
+                        GUILayout.BeginVertical("GroupBox");
                         string cloneProjectPath = cloneProjectsPath[i];
                         EditorGUILayout.LabelField("Clone " + i);
                         EditorGUILayout.TextField("Clone project path", cloneProjectPath, EditorStyles.textField);
-                        if (GUILayout.Button("Open clone project"))
+                        if (GUILayout.Button("Open in New Editor"))
                         {
                             ProjectCloner.OpenProject(cloneProjectPath);
                         }
-
+                        GUILayout.BeginHorizontal();
                         if (GUILayout.Button("Delete"))
                         {
                             bool delete = EditorUtility.DisplayDialog(
@@ -91,11 +92,26 @@ namespace UnityProjectCloner
                                 ProjectCloner.DeleteClone(cloneProjectPath);
                             }
                         }
-                    }
 
+                        //Offer a solution to user in-case they are stuck with deleting project
+                        if (GUILayout.Button("?", GUILayout.Width(30)))
+                        {
+                            var openUrl = EditorUtility.DisplayDialog("Can't delete clone?",
+                            "Sometime clone can't be deleted due to it's still opening by another unity instance running in the background." +
+                            "\nYou can read this answer from ServerFault on how to find and kill the process.", "Open Answer");
+                            if (openUrl)
+                            {
+                                Application.OpenURL("https://serverfault.com/a/537762");
+                            }
+                        }
+                        GUILayout.EndHorizontal();
+                        GUILayout.EndVertical();
+                      
+                    }
+                    GUILayout.EndVertical();
                     //Have difficulty with naming
-                    GUILayout.Label("Other", EditorStyles.boldLabel);
-                    if (GUILayout.Button("Create new clone"))
+                    //GUILayout.Label("Other", EditorStyles.boldLabel);
+                    if (GUILayout.Button("Add new clone"))
                     {
                         ProjectCloner.CreateCloneFromCurrent();
                     }
