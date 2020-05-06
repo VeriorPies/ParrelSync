@@ -157,13 +157,14 @@ namespace UnityProjectCloner
                     break;
                 case (RuntimePlatform.OSXEditor):
                     throw new System.NotImplementedException("No Mac function implement yet :(");
-                    break;
+                    //break;
                 case (RuntimePlatform.LinuxEditor):
                     throw new System.NotImplementedException("No linux support yet :(");
-                    break;
+                    //break;
                 default:
                     Debug.LogWarning("Not in a known editor. Where are you!?");
                     break;
+
             }
         }
         #endregion
@@ -253,7 +254,7 @@ namespace UnityProjectCloner
                         break;
                     case (RuntimePlatform.LinuxEditor):
                         throw new System.NotImplementedException("No linux support yet :(");
-                        break;
+                        //break;
                     default:
                         Debug.LogWarning("Not in a known editor. Where are you!?");
                         break;
