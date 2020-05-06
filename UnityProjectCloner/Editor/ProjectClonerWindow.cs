@@ -97,7 +97,7 @@ namespace UnityProjectCloner
                         if (GUILayout.Button("?", GUILayout.Width(30)))
                         {
                             var openUrl = EditorUtility.DisplayDialog("Can't delete clone?",
-                            "Sometime clone can't be deleted due to it's still opening by another unity instance running in the background." +
+                            "Sometime clone can't be deleted due to it's still being opened by another unity instance running in the background." +
                             "\nYou can read this answer from ServerFault on how to find and kill the process.", "Open Answer");
                             if (openUrl)
                             {
