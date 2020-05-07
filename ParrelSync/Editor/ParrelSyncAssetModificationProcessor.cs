@@ -19,7 +19,7 @@ namespace ParrelSync
                 {
                     Debug.Log("Trying to save " + path);
                 }
-                return new string[1] { "233"};
+                return new string[0] {};
             }
             return paths;
         }
