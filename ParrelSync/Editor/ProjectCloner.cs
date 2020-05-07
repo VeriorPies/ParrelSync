@@ -29,6 +29,8 @@ namespace ParrelSync
         /// </remarks>
         public const string CloneNameSuffix = "_clone";
 
+        public const string ProjectName = "ParrelSync";
+
         public const int MaxCloneProjectCount = 10;
 
         #region Managing clones
