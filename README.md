@@ -1,7 +1,7 @@
 ![cloner](https://raw.githubusercontent.com/314pies/ParrelSync/master/ScreenShots/Showcase%201.gif)
 <p align="center">
 <b>Convenient miltiplayer testing:<br> 
-   Test project changes on clients and server both in editor, within seconds.
+   Test project changes on clients and server within seconds - both in editor.
 </b>
 <br>
 </p>
