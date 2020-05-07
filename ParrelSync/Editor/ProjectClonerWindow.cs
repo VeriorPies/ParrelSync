@@ -27,11 +27,11 @@ namespace ParrelSync
             get { return ProjectCloner.GetCloneProjectsPath().Count >= 1; }
         }
 
-        [MenuItem("Tools/Project Cloner")]
+        [MenuItem("ParrelSync/Clones Manager")]
         private static void InitWindow()
         {
             ProjectClonerWindow window = (ProjectClonerWindow)EditorWindow.GetWindow(typeof(ProjectClonerWindow));
-            window.titleContent = new GUIContent("Project Cloner");
+            window.titleContent = new GUIContent("Clones Manager");
             window.Show();
         }
 
