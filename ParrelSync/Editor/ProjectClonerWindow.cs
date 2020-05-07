@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using UnityProjectCloner;
 using System.IO;
 
-namespace UnityProjectCloner
+namespace ParrelSync
 {
     /// <summary>
     /// Provides Unity Editor window for ProjectCloner.

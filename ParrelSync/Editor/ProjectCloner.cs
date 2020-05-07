@@ -5,9 +5,8 @@ using UnityEditor;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.IO;
-using UnityProjectCloner;
 
-namespace UnityProjectCloner
+namespace ParrelSync
 {
     /// <summary>
     /// Contains all required methods for creating a linked clone of the Unity project.

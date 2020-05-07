@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using UnityProjectCloner;
 
-namespace UnityProjectCloner
+namespace ParrelSync
 {
 	public class Project : System.ICloneable
 	{
