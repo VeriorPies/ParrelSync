@@ -107,7 +107,13 @@ namespace ParrelSync
 
                         GUILayout.BeginVertical("GroupBox");
                         string cloneProjectPath = cloneProjectsPath[i];
-                        EditorGUILayout.LabelField("Clone " + i);
+
+                        //Determine whether it is opened in another instance with UnityLockFile 
+                        bool isOpenInAnotherInstance = File.Exists(Path.Combine(cloneProjectPath, "Temp", "UnityLockfile"));
+                        if (isOpenInAnotherInstance)
+                            EditorGUILayout.LabelField("Clone " + i + " (Opened in another editor)");
+                        else
+                            EditorGUILayout.LabelField("Clone " + i);
 
                         EditorGUILayout.TextField("Clone project path", cloneProjectPath, EditorStyles.textField);
 
@@ -140,7 +146,7 @@ namespace ParrelSync
                         }
 
                         EditorGUILayout.Space(10);
-
+                        EditorGUI.BeginDisabledGroup(isOpenInAnotherInstance);
                         if (GUILayout.Button("Open in New Editor"))
                         {
                             ClonesManager.OpenProject(cloneProjectPath);
@@ -158,7 +164,7 @@ namespace ParrelSync
                                 ClonesManager.DeleteClone(cloneProjectPath);
                             }
                         }
-
+                       
                         //Offer a solution to user in-case they are stuck with deleting project
                         if (GUILayout.Button("?", GUILayout.Width(20)))
                         {
@@ -171,6 +177,7 @@ namespace ParrelSync
                             }
                         }
                         GUILayout.EndHorizontal();
+                        EditorGUI.EndDisabledGroup();
                         GUILayout.EndVertical();
 
                     }
