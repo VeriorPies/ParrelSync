@@ -34,7 +34,7 @@ namespace ParrelSync
         /// <summary>
         /// The maximum number of clones
         /// </summary>
-        public const int MaxCloneProjectCount = 10;
+        public const int MaxCloneProjectCount = 4;
 
         /// <summary>
         /// The file name for storing clone's argument.

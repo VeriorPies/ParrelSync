@@ -90,7 +90,7 @@ namespace ParrelSync
 
                         GUILayout.BeginHorizontal();
                         EditorGUILayout.LabelField("Arguments", GUILayout.Width(70));
-                        if (GUILayout.Button("?", GUILayout.Width(30)))
+                        if (GUILayout.Button("?", GUILayout.Width(20)))
                         {
                             //ToDo
                         }
@@ -103,14 +103,16 @@ namespace ParrelSync
                         {
                             argument = File.ReadAllText(argumentFilePath, System.Text.Encoding.UTF8);
                         }
-                        string argumentTextField = EditorGUILayout.TextArea(argument, GUILayout.Height(50), 
-                            GUILayout.MaxWidth(300));
+                        string argumentTextField = EditorGUILayout.TextArea(argument,
+                            GUILayout.Height(50),
+                            GUILayout.MaxWidth(300)                           
+                            );
                         File.WriteAllText(argumentFilePath, argumentTextField, System.Text.Encoding.UTF8);
                                                                       
 
                         
                         
-                        EditorGUILayout.Space(20);
+                        EditorGUILayout.Space(10);
 
                         if (GUILayout.Button("Open in New Editor"))
                         {
@@ -131,7 +133,7 @@ namespace ParrelSync
                         }
 
                         //Offer a solution to user in-case they are stuck with deleting project
-                        if (GUILayout.Button("?", GUILayout.Width(30)))
+                        if (GUILayout.Button("?", GUILayout.Width(20)))
                         {
                             var openUrl = EditorUtility.DisplayDialog("Can't delete clone?",
                             "Sometime clone can't be deleted due to it's still being opened by another unity instance running in the background." +
