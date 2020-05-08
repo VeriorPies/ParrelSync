@@ -31,7 +31,19 @@ namespace ParrelSync
 
         public const string ProjectName = "ParrelSync";
 
+        /// <summary>
+        /// The maximum number of clones
+        /// </summary>
         public const int MaxCloneProjectCount = 10;
+
+        /// <summary>
+        /// The file name for storing clone's argument.
+        /// </summary>
+        public const string ArgumentFileName = ".parrelsyncarg";
+        /// <summary>
+        /// Default argument of the new clone
+        /// </summary>
+        public const string DefaultArgument = "client";
 
         #region Managing clones
         /// <summary>
@@ -106,6 +118,10 @@ namespace ParrelSync
             /// Add clone identifier file.
             string identifierFile = Path.Combine(cloneProject.projectPath, ClonesManager.CloneFileName);
             File.Create(identifierFile).Dispose();
+
+            //DefaultArgument
+            string argumentFilePath = Path.Combine(cloneProject.projectPath, ClonesManager.ArgumentFileName);
+            File.WriteAllText(argumentFilePath, DefaultArgument,System.Text.Encoding.UTF8);
 
             /// Add collabignore.txt to stop the clone from messing with Unity Collaborate if it's enabled. Just in case.
             string collabignoreFile = Path.Combine(cloneProject.projectPath, "collabignore.txt");
@@ -303,6 +319,25 @@ namespace ParrelSync
         {
             string pathString = ClonesManager.GetCurrentProjectPath();
             return new Project(pathString);
+        }
+
+        /// <summary>
+        /// Get the argument of this clone project.
+        /// If this is the original project, will return an empty string.
+        /// </summary>
+        /// <returns></returns>
+        public static string GetArgument()
+        {
+            string argument = "";
+            if (IsClone())
+            {
+                string argumentFilePath = Path.Combine(GetCurrentProjectPath(), ClonesManager.ArgumentFileName);
+                if (File.Exists(argumentFilePath))
+                {
+                    argument = File.ReadAllText(argumentFilePath, System.Text.Encoding.UTF8);
+                }
+            }          
+            return argument;
         }
 
         /// <summary>

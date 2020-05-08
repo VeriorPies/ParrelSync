@@ -40,6 +40,18 @@ namespace ParrelSync
             if (isClone)
             {
                 /// If it is a clone project...
+                
+                //Clone project custom argument.
+                string argument = "";
+                string argumentFilePath = Path.Combine(ClonesManager.GetCurrentProjectPath(), ClonesManager.ArgumentFileName);
+                if (File.Exists(argumentFilePath))
+                {
+                    argument = File.ReadAllText(argumentFilePath, System.Text.Encoding.UTF8);
+                }
+                string argumentTextField = EditorGUILayout.TextField("Arguments", argument, EditorStyles.textField);
+                File.WriteAllText(argumentFilePath, argumentTextField, System.Text.Encoding.UTF8);
+
+                //Find out the original project name and show help box
                 string originalProjectPath = ClonesManager.GetOriginalProjectPath();
                 if (originalProjectPath == string.Empty)
                 {
@@ -69,11 +81,31 @@ namespace ParrelSync
                     var cloneProjectsPath = ClonesManager.GetCloneProjectsPath();
                     for (int i = 0; i < cloneProjectsPath.Count; i++)
                     {
-                      
+
                         GUILayout.BeginVertical("GroupBox");
                         string cloneProjectPath = cloneProjectsPath[i];
                         EditorGUILayout.LabelField("Clone " + i);
+
                         EditorGUILayout.TextField("Clone project path", cloneProjectPath, EditorStyles.textField);
+
+                        GUILayout.BeginHorizontal();
+                        string argument = "";
+                        string argumentFilePath = Path.Combine(cloneProjectPath, ClonesManager.ArgumentFileName);
+
+                        if (File.Exists(argumentFilePath))
+                        {
+                            argument = File.ReadAllText(argumentFilePath, System.Text.Encoding.UTF8);
+                        }
+                        string argumentTextField = EditorGUILayout.TextField("Arguments", argument, EditorStyles.textField);
+                        File.WriteAllText(argumentFilePath, argumentTextField, System.Text.Encoding.UTF8);
+
+                        if (GUILayout.Button("?", GUILayout.Width(30)))
+                        {
+
+                        }
+                        GUILayout.EndHorizontal();
+                        EditorGUILayout.Space(20);
+
                         if (GUILayout.Button("Open in New Editor"))
                         {
                             ClonesManager.OpenProject(cloneProjectPath);
@@ -105,7 +137,7 @@ namespace ParrelSync
                         }
                         GUILayout.EndHorizontal();
                         GUILayout.EndVertical();
-                      
+
                     }
                     GUILayout.EndVertical();
                     //Have difficulty with naming
