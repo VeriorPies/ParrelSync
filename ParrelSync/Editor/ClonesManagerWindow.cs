@@ -36,6 +36,7 @@ namespace ParrelSync
         }
 
         const string CustomArgumentHelpLink = "";
+        Vector2 clonesScrollPos;
         private void OnGUI()
         {
             if (isClone)
@@ -88,6 +89,9 @@ namespace ParrelSync
                 {
                     GUILayout.BeginVertical("HelpBox");
                     GUILayout.Label("Clones of this Project");
+
+                    clonesScrollPos =
+                         EditorGUILayout.BeginScrollView(clonesScrollPos);
                     /// If clone(s) is created, we can either open it or delete it.
                     var cloneProjectsPath = ClonesManager.GetCloneProjectsPath();
                     for (int i = 0; i < cloneProjectsPath.Count; i++)
@@ -116,13 +120,10 @@ namespace ParrelSync
                         }
                         string argumentTextAreaInput = EditorGUILayout.TextArea(argument,
                             GUILayout.Height(50),
-                            GUILayout.MaxWidth(300)                           
+                            GUILayout.MaxWidth(300)
                         );
                         File.WriteAllText(argumentFilePath, argumentTextAreaInput, System.Text.Encoding.UTF8);
-                                                                      
 
-                        
-                        
                         EditorGUILayout.Space(10);
 
                         if (GUILayout.Button("Open in New Editor"))
@@ -158,13 +159,14 @@ namespace ParrelSync
                         GUILayout.EndVertical();
 
                     }
-                    GUILayout.EndVertical();
-                    //Have difficulty with naming
-                    //GUILayout.Label("Other", EditorStyles.boldLabel);
-                    if (GUILayout.Button("Add new clone"))
+                    EditorGUILayout.EndScrollView();
+                     if (GUILayout.Button("Add new clone"))
                     {
                         ClonesManager.CreateCloneFromCurrent();
                     }
+                    GUILayout.EndVertical();
+                    GUILayout.FlexibleSpace();
+
                 }
                 else
                 {
