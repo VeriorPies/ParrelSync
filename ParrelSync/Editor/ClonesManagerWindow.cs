@@ -41,9 +41,26 @@ namespace ParrelSync
             if (isClone)
             {
                 /// If it is a clone project...
+                //Find out the original project name and show help box
+                string originalProjectPath = ClonesManager.GetOriginalProjectPath();
+                if (originalProjectPath == string.Empty)
+                {
+                    /// If original project cannot be found, display warning message.
+                    string thisProjectName = ClonesManager.GetCurrentProject().name;
+                    string supposedOriginalProjectName = ClonesManager.GetCurrentProject().name.Replace("_clone", "");
+                    EditorGUILayout.HelpBox(
+                        "This project is a clone, but the link to the original seems lost.\nYou have to manually open the original and create a new clone instead of this one.\nThe original project should have a name '" + supposedOriginalProjectName + "', if it was not changed.",
+                        MessageType.Warning);
+                }
+                else
+                {
+                    /// If original project is present, display some usage info.
+                    EditorGUILayout.HelpBox(
+                        "This project is a clone of the project '" + Path.GetFileName(originalProjectPath) + "'.\nIf you want to make changes the project files or manage clones, please open the original project through Unity Hub.",
+                        MessageType.Info);
+                }
 
                 //Clone project custom argument.
-
                 GUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("Arguments", GUILayout.Width(70));
                 if (GUILayout.Button("?", GUILayout.Width(20)))
@@ -63,26 +80,6 @@ namespace ParrelSync
                     GUILayout.MaxWidth(300)
                 );
                 File.WriteAllText(argumentFilePath, argumentTextAreaInput, System.Text.Encoding.UTF8);
-
-
-                //Find out the original project name and show help box
-                string originalProjectPath = ClonesManager.GetOriginalProjectPath();
-                if (originalProjectPath == string.Empty)
-                {
-                    /// If original project cannot be found, display warning message.
-                    string thisProjectName = ClonesManager.GetCurrentProject().name;
-                    string supposedOriginalProjectName = ClonesManager.GetCurrentProject().name.Replace("_clone", "");
-                    EditorGUILayout.HelpBox(
-                        "This project is a clone, but the link to the original seems lost.\nYou have to manually open the original and create a new clone instead of this one.\nThe original project should have a name '" + supposedOriginalProjectName + "', if it was not changed.",
-                        MessageType.Warning);
-                }
-                else
-                {
-                    /// If original project is present, display some usage info.
-                    EditorGUILayout.HelpBox(
-                        "This project is a clone of the project '" + Path.GetFileName(originalProjectPath) + "'.\nIf you want to make changes the project files or manage clones, please open the original project through Unity Hub.",
-                        MessageType.Info);
-                }
             }
             else
             {
