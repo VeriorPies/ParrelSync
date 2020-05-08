@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 namespace ParrelSync
 {
+    [InitializeOnLoad]
     public class EditorQuit
     {
         /// <summary>
