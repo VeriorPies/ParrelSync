@@ -168,6 +168,13 @@ namespace ParrelSync
             {
                 case (RuntimePlatform.WindowsEditor):
                     Debug.Log("Attempting to delete folder \"" + cloneProjectPath + "\"");
+
+                    //The argument file will be deleted first at the beginning of the project deletion process 
+                    //to prevent any further reading and writing to it(There's a File.Exist() check at the (file)editor windows.)
+                    //If there's any file in the directory being write/read during the deletion process, the directory can't be fully removed.
+                    string identifierFile = Path.Combine(cloneProjectPath, ClonesManager.ArgumentFileName);
+                    File.Delete(identifierFile);
+
                     string args = "/c " + @"rmdir /s/q " + string.Format("\"{0}\"", cloneProjectPath);
                     StartHiddenConsoleProcess("cmd.exe", args);
 

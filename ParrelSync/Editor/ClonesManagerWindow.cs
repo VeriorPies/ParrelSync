@@ -69,18 +69,26 @@ namespace ParrelSync
                     Application.OpenURL(CustomArgumentHelpLink);
                 }
                 GUILayout.EndHorizontal();
-                string argument = "";
-                string argumentFilePath = Path.Combine(ClonesManager.GetCurrentProjectPath(), ClonesManager.ArgumentFileName);
 
+                string argumentFilePath = Path.Combine(ClonesManager.GetCurrentProjectPath(), ClonesManager.ArgumentFileName);
+                //Need to be careful with file reading/writing since it will effect the deletion of
+                //the clone project(The directory won't be fully deleted if there's still file inside being read or write).
+                //The argument file will be deleted first at the beginning of the project deletion process 
+                //to prevent any further being read and write.
+                //Will need to take some extra cautious if want to change the design of how file editing is handled.
                 if (File.Exists(argumentFilePath))
                 {
-                    argument = File.ReadAllText(argumentFilePath, System.Text.Encoding.UTF8);
+                    string argument = File.ReadAllText(argumentFilePath, System.Text.Encoding.UTF8);
+                    string argumentTextAreaInput = EditorGUILayout.TextArea(argument,
+                        GUILayout.Height(50),
+                        GUILayout.MaxWidth(300)
+                    );
+                    File.WriteAllText(argumentFilePath, argumentTextAreaInput, System.Text.Encoding.UTF8);
                 }
-                string argumentTextAreaInput = EditorGUILayout.TextArea(argument,
-                    GUILayout.Height(50),
-                    GUILayout.MaxWidth(300)
-                );
-                File.WriteAllText(argumentFilePath, argumentTextAreaInput, System.Text.Encoding.UTF8);
+                else
+                {
+                    EditorGUILayout.LabelField("No argument file found.");
+                }
             }
             else
             {
@@ -111,18 +119,25 @@ namespace ParrelSync
                         }
                         GUILayout.EndHorizontal();
 
-                        string argument = "";
                         string argumentFilePath = Path.Combine(cloneProjectPath, ClonesManager.ArgumentFileName);
-
+                        //Need to be careful with file reading/writing since it will effect the deletion of
+                        //the clone project(The directory won't be fully deleted if there's still file inside being read or write).
+                        //The argument file will be deleted first at the beginning of the project deletion process 
+                        //to prevent any further being read and write.
+                        //Will need to take some extra cautious if want to change the design of how file editing is handled.
                         if (File.Exists(argumentFilePath))
                         {
-                            argument = File.ReadAllText(argumentFilePath, System.Text.Encoding.UTF8);
+                            string argument = File.ReadAllText(argumentFilePath, System.Text.Encoding.UTF8);
+                            string argumentTextAreaInput = EditorGUILayout.TextArea(argument,
+                                GUILayout.Height(50),
+                                GUILayout.MaxWidth(300)
+                            );
+                            File.WriteAllText(argumentFilePath, argumentTextAreaInput, System.Text.Encoding.UTF8);
                         }
-                        string argumentTextAreaInput = EditorGUILayout.TextArea(argument,
-                            GUILayout.Height(50),
-                            GUILayout.MaxWidth(300)
-                        );
-                        File.WriteAllText(argumentFilePath, argumentTextAreaInput, System.Text.Encoding.UTF8);
+                        else
+                        {
+                            EditorGUILayout.LabelField("No argument file found.");
+                        }
 
                         EditorGUILayout.Space(10);
 
@@ -160,7 +175,7 @@ namespace ParrelSync
 
                     }
                     EditorGUILayout.EndScrollView();
-                     if (GUILayout.Button("Add new clone"))
+                    if (GUILayout.Button("Add new clone"))
                     {
                         ClonesManager.CreateCloneFromCurrent();
                     }
