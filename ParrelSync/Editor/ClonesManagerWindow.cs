@@ -9,14 +9,14 @@ namespace ParrelSync
     /// <summary>
     /// Provides Unity Editor window for ProjectCloner.
     /// </summary>
-	public class ProjectClonerWindow : EditorWindow
+	public class ClonesManagerWindow : EditorWindow
     {
         /// <summary>
         /// True if currently open project is a clone.
         /// </summary>
         public bool isClone
         {
-            get { return ProjectCloner.IsClone(); }
+            get { return ClonesManager.IsClone(); }
         }
 
         /// <summary>
@@ -24,13 +24,13 @@ namespace ParrelSync
         /// </summary>
         public bool isCloneCreated
         {
-            get { return ProjectCloner.GetCloneProjectsPath().Count >= 1; }
+            get { return ClonesManager.GetCloneProjectsPath().Count >= 1; }
         }
 
         [MenuItem("ParrelSync/Clones Manager")]
         private static void InitWindow()
         {
-            ProjectClonerWindow window = (ProjectClonerWindow)EditorWindow.GetWindow(typeof(ProjectClonerWindow));
+            ClonesManagerWindow window = (ClonesManagerWindow)EditorWindow.GetWindow(typeof(ClonesManagerWindow));
             window.titleContent = new GUIContent("Clones Manager");
             window.Show();
         }
@@ -40,12 +40,12 @@ namespace ParrelSync
             if (isClone)
             {
                 /// If it is a clone project...
-                string originalProjectPath = ProjectCloner.GetOriginalProjectPath();
+                string originalProjectPath = ClonesManager.GetOriginalProjectPath();
                 if (originalProjectPath == string.Empty)
                 {
                     /// If original project cannot be found, display warning message.
-                    string thisProjectName = ProjectCloner.GetCurrentProject().name;
-                    string supposedOriginalProjectName = ProjectCloner.GetCurrentProject().name.Replace("_clone", "");
+                    string thisProjectName = ClonesManager.GetCurrentProject().name;
+                    string supposedOriginalProjectName = ClonesManager.GetCurrentProject().name.Replace("_clone", "");
                     EditorGUILayout.HelpBox(
                         "This project is a clone, but the link to the original seems lost.\nYou have to manually open the original and create a new clone instead of this one.\nThe original project should have a name '" + supposedOriginalProjectName + "', if it was not changed.",
                         MessageType.Warning);
@@ -66,7 +66,7 @@ namespace ParrelSync
                     GUILayout.BeginVertical("HelpBox");
                     GUILayout.Label("Clones of this Project");
                     /// If clone(s) is created, we can either open it or delete it.
-                    var cloneProjectsPath = ProjectCloner.GetCloneProjectsPath();
+                    var cloneProjectsPath = ClonesManager.GetCloneProjectsPath();
                     for (int i = 0; i < cloneProjectsPath.Count; i++)
                     {
                       
@@ -76,19 +76,19 @@ namespace ParrelSync
                         EditorGUILayout.TextField("Clone project path", cloneProjectPath, EditorStyles.textField);
                         if (GUILayout.Button("Open in New Editor"))
                         {
-                            ProjectCloner.OpenProject(cloneProjectPath);
+                            ClonesManager.OpenProject(cloneProjectPath);
                         }
                         GUILayout.BeginHorizontal();
                         if (GUILayout.Button("Delete"))
                         {
                             bool delete = EditorUtility.DisplayDialog(
                                 "Delete the clone?",
-                                "Are you sure you want to delete the clone project '" + ProjectCloner.GetCurrentProject().name + "_clone'? If so, you can always create a new clone from ProjectCloner window.",
+                                "Are you sure you want to delete the clone project '" + ClonesManager.GetCurrentProject().name + "_clone'? If so, you can always create a new clone from ProjectCloner window.",
                                 "Delete",
                                 "Cancel");
                             if (delete)
                             {
-                                ProjectCloner.DeleteClone(cloneProjectPath);
+                                ClonesManager.DeleteClone(cloneProjectPath);
                             }
                         }
 
@@ -112,7 +112,7 @@ namespace ParrelSync
                     //GUILayout.Label("Other", EditorStyles.boldLabel);
                     if (GUILayout.Button("Add new clone"))
                     {
-                        ProjectCloner.CreateCloneFromCurrent();
+                        ClonesManager.CreateCloneFromCurrent();
                     }
                 }
                 else
@@ -121,7 +121,7 @@ namespace ParrelSync
                     EditorGUILayout.HelpBox("No project clones found. Create a new one!", MessageType.Info);
                     if (GUILayout.Button("Create new clone"))
                     {
-                        ProjectCloner.CreateCloneFromCurrent();
+                        ClonesManager.CreateCloneFromCurrent();
                     }
                 }
             }

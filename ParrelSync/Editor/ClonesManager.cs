@@ -11,7 +11,7 @@ namespace ParrelSync
     /// <summary>
     /// Contains all required methods for creating a linked clone of the Unity project.
     /// </summary>
-    public class ProjectCloner
+    public class ClonesManager
     {
         /// <summary>
         /// Name used for an identifying file created in the clone project directory.
@@ -46,8 +46,8 @@ namespace ParrelSync
                 return null;
             }
 
-            string currentProjectPath = ProjectCloner.GetCurrentProjectPath();
-            return ProjectCloner.CreateCloneFromPath(currentProjectPath);
+            string currentProjectPath = ClonesManager.GetCurrentProjectPath();
+            return ClonesManager.CreateCloneFromPath(currentProjectPath);
         }
 
         /// <summary>
@@ -64,8 +64,8 @@ namespace ParrelSync
             //Find available clone suffix id
             for (int i = 0; i < MaxCloneProjectCount; i++)
             {
-                string originalProjectPath = ProjectCloner.GetCurrentProject().projectPath;
-                string possibleCloneProjectPath = originalProjectPath + ProjectCloner.CloneNameSuffix + "_" + i;
+                string originalProjectPath = ClonesManager.GetCurrentProject().projectPath;
+                string possibleCloneProjectPath = originalProjectPath + ClonesManager.CloneNameSuffix + "_" + i;
 
                 if (!Directory.Exists(possibleCloneProjectPath))
                 {
@@ -84,15 +84,15 @@ namespace ParrelSync
             Debug.Log("Start project name: " + sourceProject);
             Debug.Log("Clone project name: " + cloneProject);
 
-            ProjectCloner.CreateProjectFolder(cloneProject);
-            ProjectCloner.CopyLibraryFolder(sourceProject, cloneProject);
+            ClonesManager.CreateProjectFolder(cloneProject);
+            ClonesManager.CopyLibraryFolder(sourceProject, cloneProject);
 
-            ProjectCloner.LinkFolders(sourceProject.assetPath, cloneProject.assetPath);
-            ProjectCloner.LinkFolders(sourceProject.projectSettingsPath, cloneProject.projectSettingsPath);
-            ProjectCloner.LinkFolders(sourceProject.packagesPath, cloneProject.packagesPath);
-            ProjectCloner.LinkFolders(sourceProject.autoBuildPath, cloneProject.autoBuildPath);
+            ClonesManager.LinkFolders(sourceProject.assetPath, cloneProject.assetPath);
+            ClonesManager.LinkFolders(sourceProject.projectSettingsPath, cloneProject.projectSettingsPath);
+            ClonesManager.LinkFolders(sourceProject.packagesPath, cloneProject.packagesPath);
+            ClonesManager.LinkFolders(sourceProject.autoBuildPath, cloneProject.autoBuildPath);
 
-            ProjectCloner.RegisterClone(cloneProject);
+            ClonesManager.RegisterClone(cloneProject);
 
             return cloneProject;
         }
@@ -104,7 +104,7 @@ namespace ParrelSync
         private static void RegisterClone(Project cloneProject)
         {
             /// Add clone identifier file.
-            string identifierFile = Path.Combine(cloneProject.projectPath, ProjectCloner.CloneFileName);
+            string identifierFile = Path.Combine(cloneProject.projectPath, ClonesManager.CloneFileName);
             File.Create(identifierFile).Dispose();
 
             /// Add collabignore.txt to stop the clone from messing with Unity Collaborate if it's enabled. Just in case.
@@ -123,7 +123,7 @@ namespace ParrelSync
                 Debug.LogError("Cannot open the project - provided folder (" + projectPath + ") does not exist.");
                 return;
             }
-            if (projectPath == ProjectCloner.GetCurrentProjectPath())
+            if (projectPath == ClonesManager.GetCurrentProjectPath())
             {
                 Debug.LogError("Cannot open the project - it is already open.");
                 return;
@@ -132,7 +132,7 @@ namespace ParrelSync
             string fileName = EditorApplication.applicationPath;
             string args = "-projectPath \"" + projectPath + "\"";
             Debug.Log("Opening project \"" + fileName + " " + args + "\"");
-            ProjectCloner.StartHiddenConsoleProcess(fileName, args);
+            ClonesManager.StartHiddenConsoleProcess(fileName, args);
         }
 
         /// <summary>
@@ -141,11 +141,11 @@ namespace ParrelSync
         public static void DeleteClone(string cloneProjectPath)
         {
             /// Clone won't be able to delete itself.
-            if (ProjectCloner.IsClone()) return;
+            if (ClonesManager.IsClone()) return;
 
             ///Extra precautions.
             if (cloneProjectPath == string.Empty) return;
-            if (cloneProjectPath == ProjectCloner.GetOriginalProjectPath()) return;
+            if (cloneProjectPath == ClonesManager.GetOriginalProjectPath()) return;
 
             //Check what OS is
             switch (Application.platform)
@@ -196,7 +196,7 @@ namespace ParrelSync
             }
 
             Debug.Log("Library copy: " + destinationProject.libraryPath);
-            ProjectCloner.CopyDirectoryWithProgressBar(sourceProject.libraryPath, destinationProject.libraryPath, "Cloning project '" + sourceProject.name + "'. ");
+            ClonesManager.CopyDirectoryWithProgressBar(sourceProject.libraryPath, destinationProject.libraryPath, "Cloning project '" + sourceProject.name + "'. ");
         }
         #endregion
 
@@ -213,7 +213,7 @@ namespace ParrelSync
             string cmd = "ln " + string.Format("\"{0}\" \"{1}\"", destinationPath, sourcePath);
             Debug.Log("Mac hard link " + cmd);
 
-            ProjectCloner.StartHiddenConsoleProcess("/bin/bash", cmd);
+            ClonesManager.StartHiddenConsoleProcess("/bin/bash", cmd);
         }
 
         /// <summary>
@@ -225,7 +225,7 @@ namespace ParrelSync
         {
             string cmd = "/C mklink /J " + string.Format("\"{0}\" \"{1}\"", destinationPath, sourcePath);
             Debug.Log("Windows junction: " + cmd);
-            ProjectCloner.StartHiddenConsoleProcess("cmd.exe", cmd);
+            ClonesManager.StartHiddenConsoleProcess("cmd.exe", cmd);
         }
 
         //TODO avoid terminal calls and use proper api stuff. See below for windows! 
@@ -280,7 +280,7 @@ namespace ParrelSync
             if (isCloneFileExistCache == null)
             {
                 /// The project is a clone if its root directory contains an empty file named ".clone".
-                string cloneFilePath = Path.Combine(ProjectCloner.GetCurrentProjectPath(), ProjectCloner.CloneFileName);
+                string cloneFilePath = Path.Combine(ClonesManager.GetCurrentProjectPath(), ClonesManager.CloneFileName);
                 isCloneFileExistCache = File.Exists(cloneFilePath);
             }
             return (bool)isCloneFileExistCache;
@@ -301,7 +301,7 @@ namespace ParrelSync
         /// <returns></returns>
         public static Project GetCurrentProject()
         {
-            string pathString = ProjectCloner.GetCurrentProjectPath();
+            string pathString = ClonesManager.GetCurrentProjectPath();
             return new Project(pathString);
         }
 
@@ -317,9 +317,9 @@ namespace ParrelSync
             {
                 /// If this is a clone...
                 /// Original project path can be deduced by removing the suffix from the clone's path.
-                string cloneProjectPath = ProjectCloner.GetCurrentProject().projectPath;
+                string cloneProjectPath = ClonesManager.GetCurrentProject().projectPath;
 
-                int index = cloneProjectPath.LastIndexOf(ProjectCloner.CloneNameSuffix);
+                int index = cloneProjectPath.LastIndexOf(ClonesManager.CloneNameSuffix);
                 if (index > 0)
                 {
                     string originalProjectPath = cloneProjectPath.Substring(0, index);
@@ -331,7 +331,7 @@ namespace ParrelSync
             else
             {
                 /// If this is the original, we return its own path.
-                return ProjectCloner.GetCurrentProjectPath();
+                return ClonesManager.GetCurrentProjectPath();
             }
         }
 
@@ -344,8 +344,8 @@ namespace ParrelSync
             List<string> projectsPath = new List<string>();
             for (int i = 0; i < MaxCloneProjectCount; i++)
             {
-                string originalProjectPath = ProjectCloner.GetCurrentProject().projectPath;
-                string cloneProjectPath = originalProjectPath + ProjectCloner.CloneNameSuffix + "_" + i;
+                string originalProjectPath = ClonesManager.GetCurrentProject().projectPath;
+                string cloneProjectPath = originalProjectPath + ClonesManager.CloneNameSuffix + "_" + i;
 
                 if (Directory.Exists(cloneProjectPath))
                     projectsPath.Add(cloneProjectPath);
@@ -367,7 +367,7 @@ namespace ParrelSync
             long totalBytes = 0;
             long copiedBytes = 0;
 
-            ProjectCloner.CopyDirectoryWithProgressBarRecursive(source, destination, ref totalBytes, ref copiedBytes, progressBarPrefix);
+            ClonesManager.CopyDirectoryWithProgressBarRecursive(source, destination, ref totalBytes, ref copiedBytes, progressBarPrefix);
             EditorUtility.ClearProgressBar();
         }
 
@@ -392,7 +392,7 @@ namespace ParrelSync
             /// Calculate total bytes, if required.
             if (totalBytes == 0)
             {
-                totalBytes = ProjectCloner.GetDirectorySize(source, true, progressBarPrefix);
+                totalBytes = ClonesManager.GetDirectorySize(source, true, progressBarPrefix);
             }
 
             /// Create destination directory, if required.
@@ -430,7 +430,7 @@ namespace ParrelSync
             foreach (DirectoryInfo sourceNestedDir in source.GetDirectories())
             {
                 DirectoryInfo nextDestingationNestedDir = destination.CreateSubdirectory(sourceNestedDir.Name);
-                ProjectCloner.CopyDirectoryWithProgressBarRecursive(sourceNestedDir, nextDestingationNestedDir, ref totalBytes, ref copiedBytes, progressBarPrefix);
+                ClonesManager.CopyDirectoryWithProgressBarRecursive(sourceNestedDir, nextDestingationNestedDir, ref totalBytes, ref copiedBytes, progressBarPrefix);
             }
         }
 
@@ -455,7 +455,7 @@ namespace ParrelSync
                 IEnumerable<DirectoryInfo> nestedDirectories = directory.EnumerateDirectories();
                 foreach (DirectoryInfo nestedDir in nestedDirectories)
                 {
-                    directoriesSize += ProjectCloner.GetDirectorySize(nestedDir, true, progressBarPrefix);
+                    directoriesSize += ClonesManager.GetDirectorySize(nestedDir, true, progressBarPrefix);
                 }
             }
 
