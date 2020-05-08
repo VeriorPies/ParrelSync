@@ -40,7 +40,7 @@ namespace ParrelSync
             if (isClone)
             {
                 /// If it is a clone project...
-                
+
                 //Clone project custom argument.
                 string argument = "";
                 string argumentFilePath = Path.Combine(ClonesManager.GetCurrentProjectPath(), ClonesManager.ArgumentFileName);
@@ -89,6 +89,13 @@ namespace ParrelSync
                         EditorGUILayout.TextField("Clone project path", cloneProjectPath, EditorStyles.textField);
 
                         GUILayout.BeginHorizontal();
+                        EditorGUILayout.LabelField("Arguments", GUILayout.Width(70));
+                        if (GUILayout.Button("?", GUILayout.Width(30)))
+                        {
+                            //ToDo
+                        }
+                        GUILayout.EndHorizontal();
+
                         string argument = "";
                         string argumentFilePath = Path.Combine(cloneProjectPath, ClonesManager.ArgumentFileName);
 
@@ -96,14 +103,13 @@ namespace ParrelSync
                         {
                             argument = File.ReadAllText(argumentFilePath, System.Text.Encoding.UTF8);
                         }
-                        string argumentTextField = EditorGUILayout.TextField("Arguments", argument, EditorStyles.textField);
+                        string argumentTextField = EditorGUILayout.TextArea(argument, GUILayout.Height(50), 
+                            GUILayout.MaxWidth(300));
                         File.WriteAllText(argumentFilePath, argumentTextField, System.Text.Encoding.UTF8);
+                                                                      
 
-                        if (GUILayout.Button("?", GUILayout.Width(30)))
-                        {
-
-                        }
-                        GUILayout.EndHorizontal();
+                        
+                        
                         EditorGUILayout.Space(20);
 
                         if (GUILayout.Button("Open in New Editor"))
