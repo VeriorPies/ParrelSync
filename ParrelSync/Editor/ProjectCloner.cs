@@ -154,14 +154,14 @@ namespace ParrelSync
                     Debug.Log("Attempting to delete folder \"" + cloneProjectPath + "\"");
                     string args = "/c " + @"rmdir /s/q " + string.Format("\"{0}\"", cloneProjectPath);
                     StartHiddenConsoleProcess("cmd.exe", args);
-                   
+
                     break;
                 case (RuntimePlatform.OSXEditor):
                     throw new System.NotImplementedException("No Mac function implement yet :(");
-                    //break;
+                //break;
                 case (RuntimePlatform.LinuxEditor):
                     throw new System.NotImplementedException("No linux support yet :(");
-                    //break;
+                //break;
                 default:
                     Debug.LogWarning("Not in a known editor. Where are you!?");
                     break;
@@ -255,7 +255,7 @@ namespace ParrelSync
                         break;
                     case (RuntimePlatform.LinuxEditor):
                         throw new System.NotImplementedException("No linux support yet :(");
-                        //break;
+                    //break;
                     default:
                         Debug.LogWarning("Not in a known editor. Where are you!?");
                         break;
@@ -269,16 +269,21 @@ namespace ParrelSync
         #endregion
 
         #region Utility methods
+
+        private static bool? isCloneFileExistCache = null;
         /// <summary>
-        /// Returns true is the project currently open in Unity Editor is a clone.
+        /// Returns true if the project currently open in Unity Editor is a clone.
         /// </summary>
         /// <returns></returns>
         public static bool IsClone()
         {
-            /// The project is a clone if its root directory contains an empty file named ".clone".
-            string cloneFilePath = Path.Combine(ProjectCloner.GetCurrentProjectPath(), ProjectCloner.CloneFileName);
-            bool isClone = File.Exists(cloneFilePath);
-            return isClone;
+            if (isCloneFileExistCache == null)
+            {
+                /// The project is a clone if its root directory contains an empty file named ".clone".
+                string cloneFilePath = Path.Combine(ProjectCloner.GetCurrentProjectPath(), ProjectCloner.CloneFileName);
+                isCloneFileExistCache = File.Exists(cloneFilePath);
+            }
+            return (bool)isCloneFileExistCache;
         }
 
         /// <summary>
