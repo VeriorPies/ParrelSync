@@ -35,6 +35,7 @@ namespace ParrelSync
             window.Show();
         }
 
+        const string CustomArgumentHelpLink = "";
         private void OnGUI()
         {
             if (isClone)
@@ -42,14 +43,27 @@ namespace ParrelSync
                 /// If it is a clone project...
 
                 //Clone project custom argument.
+
+                GUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField("Arguments", GUILayout.Width(70));
+                if (GUILayout.Button("?", GUILayout.Width(20)))
+                {
+                    Application.OpenURL(CustomArgumentHelpLink);
+                }
+                GUILayout.EndHorizontal();
                 string argument = "";
                 string argumentFilePath = Path.Combine(ClonesManager.GetCurrentProjectPath(), ClonesManager.ArgumentFileName);
+
                 if (File.Exists(argumentFilePath))
                 {
                     argument = File.ReadAllText(argumentFilePath, System.Text.Encoding.UTF8);
                 }
-                string argumentTextField = EditorGUILayout.TextField("Arguments", argument, EditorStyles.textField);
-                File.WriteAllText(argumentFilePath, argumentTextField, System.Text.Encoding.UTF8);
+                string argumentTextAreaInput = EditorGUILayout.TextArea(argument,
+                    GUILayout.Height(50),
+                    GUILayout.MaxWidth(300)
+                );
+                File.WriteAllText(argumentFilePath, argumentTextAreaInput, System.Text.Encoding.UTF8);
+
 
                 //Find out the original project name and show help box
                 string originalProjectPath = ClonesManager.GetOriginalProjectPath();
@@ -92,7 +106,7 @@ namespace ParrelSync
                         EditorGUILayout.LabelField("Arguments", GUILayout.Width(70));
                         if (GUILayout.Button("?", GUILayout.Width(20)))
                         {
-                            //ToDo
+                            Application.OpenURL(CustomArgumentHelpLink);
                         }
                         GUILayout.EndHorizontal();
 
@@ -103,11 +117,11 @@ namespace ParrelSync
                         {
                             argument = File.ReadAllText(argumentFilePath, System.Text.Encoding.UTF8);
                         }
-                        string argumentTextField = EditorGUILayout.TextArea(argument,
+                        string argumentTextAreaInput = EditorGUILayout.TextArea(argument,
                             GUILayout.Height(50),
                             GUILayout.MaxWidth(300)                           
-                            );
-                        File.WriteAllText(argumentFilePath, argumentTextField, System.Text.Encoding.UTF8);
+                        );
+                        File.WriteAllText(argumentFilePath, argumentTextAreaInput, System.Text.Encoding.UTF8);
                                                                       
 
                         
