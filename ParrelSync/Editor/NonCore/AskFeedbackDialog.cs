@@ -5,6 +5,11 @@
     using UnityEditor;
     using UnityEngine;
 
+    /// <summary>
+    /// A simple script to display feedback/star dialog after certain time of project being opened/re-compiled.
+    /// Will only pop-up once unless "Remind me next time" are chosen.
+    /// Removing this file from project wont effect any other functions.
+    /// </summary>
     [InitializeOnLoad]
     public class AskFeedbackDialog
     {

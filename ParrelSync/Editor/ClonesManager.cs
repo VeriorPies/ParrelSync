@@ -37,7 +37,7 @@ namespace ParrelSync
         public const int MaxCloneProjectCount = 10;
 
         /// <summary>
-        /// The file name for storing clone's argument.
+        /// Name of the file for storing clone's argument.
         /// </summary>
         public const string ArgumentFileName = ".parrelsyncarg";
         /// <summary>
@@ -93,8 +93,7 @@ namespace ParrelSync
 
             Project cloneProject = new Project(cloneProjectPath);
 
-            Debug.Log("Start project name: " + sourceProject);
-            Debug.Log("Clone project name: " + cloneProject);
+            Debug.Log("Start cloning project, original project: " + sourceProject + ", clone project: " + cloneProject);
 
             ClonesManager.CreateProjectFolder(cloneProject);
             ClonesManager.CopyLibraryFolder(sourceProject, cloneProject);
@@ -119,9 +118,9 @@ namespace ParrelSync
             string identifierFile = Path.Combine(cloneProject.projectPath, ClonesManager.CloneFileName);
             File.Create(identifierFile).Dispose();
 
-            //DefaultArgument
+            //Add argument file with default argument
             string argumentFilePath = Path.Combine(cloneProject.projectPath, ClonesManager.ArgumentFileName);
-            File.WriteAllText(argumentFilePath, DefaultArgument,System.Text.Encoding.UTF8);
+            File.WriteAllText(argumentFilePath, DefaultArgument, System.Text.Encoding.UTF8);
 
             /// Add collabignore.txt to stop the clone from messing with Unity Collaborate if it's enabled. Just in case.
             string collabignoreFile = Path.Combine(cloneProject.projectPath, "collabignore.txt");
@@ -206,7 +205,7 @@ namespace ParrelSync
         }
 
         /// <summary>
-        /// Copies the full contents of the unity library. We want to do this to avoid the lengthy reserialization of the whole project when it opens up the clone.
+        /// Copies the full contents of the unity library. We want to do this to avoid the lengthy re-serialization of the whole project when it opens up the clone.
         /// </summary>
         /// <param name="sourceProject"></param>
         /// <param name="destinationProject"></param>
@@ -231,7 +230,7 @@ namespace ParrelSync
         /// <param name="destinationPath"></param>
         private static void CreateLinkMac(string sourcePath, string destinationPath)
         {
-            Debug.LogWarning("This hasn't been tested yet! I am mac-less :( Please chime in on the github if it works for you.");
+            Debug.LogWarning("This hasn't been tested yet!");
 
             string cmd = "ln " + string.Format("\"{0}\" \"{1}\"", destinationPath, sourcePath);
             Debug.Log("Mac hard link " + cmd);
@@ -251,7 +250,7 @@ namespace ParrelSync
             ClonesManager.StartHiddenConsoleProcess("cmd.exe", cmd);
         }
 
-        //TODO avoid terminal calls and use proper api stuff. See below for windows! 
+        //TODO(?) avoid terminal calls and use proper api stuff. See below for windows! 
         ////https://docs.microsoft.com/en-us/windows/desktop/api/ioapiset/nf-ioapiset-deviceiocontrol
         //[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         //private static extern bool DeviceIoControl(System.IntPtr hDevice, uint dwIoControlCode,
@@ -260,7 +259,7 @@ namespace ParrelSync
         //	out int pBytesReturned, System.IntPtr lpOverlapped);
 
         /// <summary>
-        /// Create a link / junction from the real project to it's clone.
+        /// Create a link / junction from the original project to it's clone.
         /// </summary>
         /// <param name="sourcePath"></param>
         /// <param name="destinationPath"></param>
@@ -343,7 +342,7 @@ namespace ParrelSync
                 {
                     argument = File.ReadAllText(argumentFilePath, System.Text.Encoding.UTF8);
                 }
-            }          
+            }
             return argument;
         }
 

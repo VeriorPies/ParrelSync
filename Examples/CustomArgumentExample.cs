@@ -10,13 +10,15 @@ namespace ParrelSync.Example
         // Start is called before the first frame update
         void Start()
         {
+            //Is this unity editor instance opening a clone project?
             if (ClonesManager.IsClone())
             {
                 Debug.Log("This is a clone project.");
 
+                //Argument can be set from the clones manager window.               
                 string customArgument = ClonesManager.GetArgument();
                 Debug.Log("The custom argument of this clone project is: " + customArgument);
-                //Do what ever you need with the argument string
+                //Do what ever you need with the argument string.
             }
             else
             {

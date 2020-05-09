@@ -7,18 +7,10 @@ using System.IO;
 namespace ParrelSync
 {
     /// <summary>
-    /// Provides Unity Editor window for ProjectCloner.
+    ///Clones manager Unity editor window
     /// </summary>
 	public class ClonesManagerWindow : EditorWindow
     {
-        /// <summary>
-        /// True if currently open project is a clone.
-        /// </summary>
-        public bool isClone
-        {
-            get { return ClonesManager.IsClone(); }
-        }
-
         /// <summary>
         /// Returns true if project clone exists.
         /// </summary>
@@ -35,8 +27,15 @@ namespace ParrelSync
             window.Show();
         }
 
+        /// <summary>
+        /// Helper link about using custom argument
+        /// </summary>
         const string CustomArgumentHelpLink = "";
+        /// <summary>
+        /// For storing the scroll position of clones list
+        /// </summary>
         Vector2 clonesScrollPos;
+
         private void OnGUI()
         {
             if(Application.platform == RuntimePlatform.OSXEditor || Application.platform == RuntimePlatform.LinuxEditor)
@@ -52,18 +51,16 @@ namespace ParrelSync
                 return;
             }
 
-            if (isClone)
-            {
-                /// If it is a clone project...
-                //Find out the original project name and show help box
+            /// If it is a clone project...
+            if (ClonesManager.IsClone())
+            {               
+                //Find out the original project name and show the help box
                 string originalProjectPath = ClonesManager.GetOriginalProjectPath();
                 if (originalProjectPath == string.Empty)
                 {
                     /// If original project cannot be found, display warning message.
-                    string thisProjectName = ClonesManager.GetCurrentProject().name;
-                    string supposedOriginalProjectName = ClonesManager.GetCurrentProject().name.Replace("_clone", "");
                     EditorGUILayout.HelpBox(
-                        "This project is a clone, but the link to the original seems lost.\nYou have to manually open the original and create a new clone instead of this one.\nThe original project should have a name '" + supposedOriginalProjectName + "', if it was not changed.",
+                        "This project is a clone, but the link to the original seems lost.\nYou have to manually open the original and create a new clone instead of this one.\n",
                         MessageType.Warning);
                 }
                 else
@@ -84,9 +81,9 @@ namespace ParrelSync
                 GUILayout.EndHorizontal();
 
                 string argumentFilePath = Path.Combine(ClonesManager.GetCurrentProjectPath(), ClonesManager.ArgumentFileName);
-                //Need to be careful with file reading/writing since it will effect the deletion of
-                //the clone project(The directory won't be fully deleted if there's still file inside being read or write).
-                //The argument file will be deleted first at the beginning of the project deletion process 
+                //Need to be careful with file reading / writing since it will effect the deletion of
+                //  the clone project(The directory won't be fully deleted if there's still file inside being read or write).
+                //The argument file will be deleted first at the beginning of the project deletion process
                 //to prevent any further being read and write.
                 //Will need to take some extra cautious if want to change the design of how file editing is handled.
                 if (File.Exists(argumentFilePath))
@@ -103,17 +100,16 @@ namespace ParrelSync
                     EditorGUILayout.LabelField("No argument file found.");
                 }
             }
-            else
+            else// If it is an original project...
             {
-                /// If it is an original project...
                 if (isCloneCreated)
                 {
                     GUILayout.BeginVertical("HelpBox");
                     GUILayout.Label("Clones of this Project");
 
+                    //List all clones
                     clonesScrollPos =
-                         EditorGUILayout.BeginScrollView(clonesScrollPos);
-                    /// If clone(s) is created, we can either open it or delete it.
+                         EditorGUILayout.BeginScrollView(clonesScrollPos);                  
                     var cloneProjectsPath = ClonesManager.GetCloneProjectsPath();
                     for (int i = 0; i < cloneProjectsPath.Count; i++)
                     {
@@ -121,7 +117,7 @@ namespace ParrelSync
                         GUILayout.BeginVertical("GroupBox");
                         string cloneProjectPath = cloneProjectsPath[i];
 
-                        //Determine whether it is opened in another instance with UnityLockFile 
+                        //Determine whether it is opened in another instance by checking the UnityLockFile 
                         bool isOpenInAnotherInstance = File.Exists(Path.Combine(cloneProjectPath, "Temp", "UnityLockfile"));
                         if (isOpenInAnotherInstance)
                             EditorGUILayout.LabelField("Clone " + i + " (Running)", EditorStyles.boldLabel);
@@ -164,6 +160,7 @@ namespace ParrelSync
                         {
                             ClonesManager.OpenProject(cloneProjectPath);
                         }
+
                         GUILayout.BeginHorizontal();
                         if (GUILayout.Button("Delete"))
                         {
@@ -195,13 +192,14 @@ namespace ParrelSync
 
                     }
                     EditorGUILayout.EndScrollView();
+
                     if (GUILayout.Button("Add new clone"))
                     {
                         ClonesManager.CreateCloneFromCurrent();
                     }
+
                     GUILayout.EndVertical();
                     GUILayout.FlexibleSpace();
-
                 }
                 else
                 {

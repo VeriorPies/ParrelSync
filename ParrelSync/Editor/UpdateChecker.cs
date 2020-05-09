@@ -5,6 +5,9 @@ using UnityEditor;
 using UnityEngine;
 namespace ParrelSync.Update
 {
+    /// <summary>
+    /// A simple update checker
+    /// </summary>
     public class UpdateChecker
     {
         const string LocalVersionFilePath = "Assets/ParrelSync/VERSION.txt";
