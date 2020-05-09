@@ -156,7 +156,7 @@ namespace ParrelSync
                         {
                             bool delete = EditorUtility.DisplayDialog(
                                 "Delete the clone?",
-                                "Are you sure you want to delete the clone project '" + ClonesManager.GetCurrentProject().name + "_clone'? If so, you can always create a new clone from ProjectCloner window.",
+                                "Are you sure you want to delete the clone project '" + ClonesManager.GetCurrentProject().name + "_clone'?",
                                 "Delete",
                                 "Cancel");
                             if (delete)
