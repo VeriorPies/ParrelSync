@@ -39,6 +39,19 @@ namespace ParrelSync
         Vector2 clonesScrollPos;
         private void OnGUI()
         {
+            if(Application.platform == RuntimePlatform.OSXEditor || Application.platform == RuntimePlatform.LinuxEditor)
+            {
+                EditorGUILayout.HelpBox(
+                       "Sorry, but " + ClonesManager.ProjectName + " doesn't support Mac and Linux currently.\n" +
+                       "Please create a feature request on GitHub issue page if you want it to be added.",
+                       MessageType.Info);
+                if (GUILayout.Button("Open GitHub issue Page"))
+                {
+                    Application.OpenURL("https://github.com/314pies/ParrelSync/issues");
+                }
+                return;
+            }
+
             if (isClone)
             {
                 /// If it is a clone project...
