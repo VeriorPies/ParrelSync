@@ -30,7 +30,7 @@ namespace ParrelSync
         /// <summary>
         /// Helper link about using custom argument
         /// </summary>
-        const string CustomArgumentHelpLink = "";
+        const string CustomArgumentHelpLink = "https://github.com/314pies/ParrelSync/wiki/Argument";
         /// <summary>
         /// For storing the scroll position of clones list
         /// </summary>
