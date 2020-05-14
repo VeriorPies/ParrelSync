@@ -27,7 +27,10 @@ namespace ParrelSync.Update
                     Debug.Log("latest version text got: " + latesteVersionText);
                     string messageBody = "Current Version: " + localVersionText +"\n"
                                          +"Latest Version: " + latesteVersionText + "\n";
-                    if (float.Parse(latesteVersionText) > float.Parse(localVersionText))
+                    var latestVersion = new Version(latesteVersionText);
+                    var localVersion = new Version(localVersionText);
+
+                    if (latestVersion > localVersion)
                     {
                         Debug.Log("There's a newer version");
                         messageBody += "There's a newer version available";
