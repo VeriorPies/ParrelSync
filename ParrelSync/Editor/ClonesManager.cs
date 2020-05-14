@@ -517,6 +517,11 @@ namespace ParrelSync
 
             process.Start();
         }
+        
+        public static void OpenProjectInFileExplorer(string path)
+        {           
+            System.Diagnostics.Process.Start(@path);            
+        }
         #endregion
     }
 }

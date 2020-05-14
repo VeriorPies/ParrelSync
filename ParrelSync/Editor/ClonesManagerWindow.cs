@@ -124,7 +124,13 @@ namespace ParrelSync
                         else
                             EditorGUILayout.LabelField("Clone " + i);
 
+                        GUILayout.BeginHorizontal();
                         EditorGUILayout.TextField("Clone project path", cloneProjectPath, EditorStyles.textField);
+                        if (GUILayout.Button("View Folder", GUILayout.Width(80)))
+                        {
+                            ClonesManager.OpenProjectInFileExplorer(cloneProjectPath);                           
+                        }
+                        GUILayout.EndHorizontal();
 
                         GUILayout.BeginHorizontal();
                         EditorGUILayout.LabelField("Arguments", GUILayout.Width(70));
