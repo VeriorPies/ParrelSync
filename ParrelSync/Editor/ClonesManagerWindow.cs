@@ -114,11 +114,16 @@ namespace ParrelSync
                         string cloneProjectPath = cloneProjectsPath[i];
 
                         //Determine whether it is opened in another instance by checking the UnityLockFile 
-                        bool isOpenInAnotherInstance = File.Exists(Path.Combine(cloneProjectPath, "Temp", "UnityLockfile"));
+
+                        string UnityLockFilePath = Path.Combine(cloneProjectPath, "Temp", "UnityLockfile");
+
+                        bool isOpenInAnotherInstance = File.Exists(UnityLockFilePath) && FileUtilities.IsFileLocked(UnityLockFilePath);
+
                         if (isOpenInAnotherInstance)
                             EditorGUILayout.LabelField("Clone " + i + " (Running)", EditorStyles.boldLabel);
                         else
                             EditorGUILayout.LabelField("Clone " + i);
+
 
                         GUILayout.BeginHorizontal();
                         EditorGUILayout.TextField("Clone project path", cloneProjectPath, EditorStyles.textField);
