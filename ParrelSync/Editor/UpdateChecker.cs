@@ -11,7 +11,6 @@ namespace ParrelSync.Update
     public class UpdateChecker
     {
         const string LocalVersionFilePath = "Assets/ParrelSync/VERSION.txt";
-        const string RemoteVersionURL = "https://raw.githubusercontent.com/314pies/ParrelSync/master/VERSION.txt";
         [MenuItem("ParrelSync/Check for update", priority = 20)]
         static void CheckForUpdate()
         {
@@ -22,8 +21,7 @@ namespace ParrelSync.Update
                     string localVersionText = AssetDatabase.LoadAssetAtPath<TextAsset>(LocalVersionFilePath).text;
                     Debug.Log("Local version text : " + localVersionText);
 
-                    string latesteVersionText = client.DownloadString(RemoteVersionURL);
-                    //string versionCheck = client.DownloadString("https://raw.githubusercontent.com/314pies/ParrelSync/master/VERSI");
+                    string latesteVersionText = client.DownloadString(ExternalLinks.RemoteVersionURL);
                     Debug.Log("latest version text got: " + latesteVersionText);
                     string messageBody = "Current Version: " + localVersionText +"\n"
                                          +"Latest Version: " + latesteVersionText + "\n";
@@ -36,7 +34,7 @@ namespace ParrelSync.Update
                         messageBody += "There's a newer version available";
                         if(EditorUtility.DisplayDialog("Check for update.", messageBody, "Get latest release", "Close"))
                         {
-                            Application.OpenURL("https://github.com/314pies/ParrelSync/releases");
+                            Application.OpenURL(ExternalLinks.Releases);
                         }
                     }
                     else
