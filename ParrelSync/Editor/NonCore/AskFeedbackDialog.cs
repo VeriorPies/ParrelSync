@@ -47,7 +47,7 @@
                     Debug.Log("AskFeedbackDialog: Star on GitHub selected");
                     EditorPrefs.SetBool(StopShowingKey, true);
                     EditorPrefs.DeleteKey(InitializeOnLoadCountKey);
-                    Application.OpenURL("https://github.com/314pies/ParrelSync");
+                    Application.OpenURL(ExternalLinks.GitHubHome);
                     break;
                 // Second parameter.
                 case 1:
