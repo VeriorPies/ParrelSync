@@ -161,7 +161,10 @@ namespace ParrelSync
                             EditorGUILayout.LabelField("No argument file found.");
                         }
 
-                        EditorGUILayout.Space(10);
+                        EditorGUILayout.Space();
+                        EditorGUILayout.Space();
+                        EditorGUILayout.Space();
+
                         EditorGUI.BeginDisabledGroup(isOpenInAnotherInstance);
                         if (GUILayout.Button("Open in New Editor"))
                         {
