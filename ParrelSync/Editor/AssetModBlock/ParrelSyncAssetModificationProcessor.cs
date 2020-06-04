@@ -11,7 +11,7 @@ namespace ParrelSync
     {
         public static string[] OnWillSaveAssets(string[] paths)
         {
-            if (ClonesManager.IsClone())
+            if (paths != null && paths.Length > 0 && ClonesManager.IsClone())
             {
                 if (!EditorQuit.IsQuiting)
                 {
