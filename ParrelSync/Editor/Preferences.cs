@@ -86,7 +86,7 @@ namespace ParrelSync
             GUILayout.BeginVertical("GroupBox");
 
             AssetModPref.SetValue(
-                 EditorGUILayout.ToggleLeft("Disable asset saving in clone editors (recommended)",
+                 EditorGUILayout.ToggleLeft("(recommended) Disable asset saving in clone editors, require re-open clone editors",
                  AssetModPref.GetValue())
             );
 
