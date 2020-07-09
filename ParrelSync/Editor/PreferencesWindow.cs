@@ -55,9 +55,9 @@ namespace ParrelSync
             window.Show();
         }
 
-        public BoolPreference AssetModPref = new BoolPreference("ParrelSync_AssetModProtect", true);
+        public BoolPreference AssetModPref = new BoolPreference("ParrelSync_DisableClonesAssetSaving", true);
 
-        public BoolPreference ClonProOpenStasPref = new BoolPreference("ParrelSync_ShownCloneProjectsOpenStatus", true);
+        public BoolPreference ClonProOpenStasPref = new BoolPreference("ParrelSync_ShownClonesOpenStatus", true);
         public BoolPreference UnityLockFileOPenStasPref = new BoolPreference("ParrelSync_CheckUnityLockFileOpenStatus", true);
 
         private void OnGUI()
@@ -92,6 +92,7 @@ namespace ParrelSync
                 AssetModPref.ClearValue();
                 ClonProOpenStasPref.ClearValue();
                 UnityLockFileOPenStasPref.ClearValue();
+                Debug.Log("Editor preferences cleared");
             }
             GUILayout.EndVertical();
         }
