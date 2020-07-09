@@ -73,6 +73,14 @@ namespace ParrelSync
 
         private void OnGUI()
         {
+            if (ClonesManager.IsClone())
+            {
+                EditorGUILayout.HelpBox(
+                        "This is a clone project. Please use the original project editor to change preferences.",
+                        MessageType.Info);
+                return;
+            }
+
             GUILayout.BeginVertical("HelpBox");
             GUILayout.Label("Preferences");
             GUILayout.BeginVertical("GroupBox");
