@@ -6,7 +6,7 @@ using UnityEditor;
 namespace ParrelSync
 {
     /// <summary>
-    /// For adding value caching for <see cref="EditorPrefs"/> functions
+    /// To add value caching for <see cref="EditorPrefs"/> functions
     /// </summary>
     public class BoolPreference
     {
@@ -45,20 +45,20 @@ namespace ParrelSync
         }
     }
 
-    public class PreferencesWindow : EditorWindow
+    public class Preferences : EditorWindow
     {
         [MenuItem("ParrelSync/Preferences", priority = 1)]
         private static void InitWindow()
         {
-            PreferencesWindow window = (PreferencesWindow)EditorWindow.GetWindow(typeof(PreferencesWindow));
+            Preferences window = (Preferences)EditorWindow.GetWindow(typeof(Preferences));
             window.titleContent = new GUIContent(ClonesManager.ProjectName + " Preferences");
             window.Show();
         }
 
-        public BoolPreference AssetModPref = new BoolPreference("ParrelSync_DisableClonesAssetSaving", true);
+        public static BoolPreference AssetModPref = new BoolPreference("ParrelSync_DisableClonesAssetSaving", true);
 
-        public BoolPreference ClonProOpenStasPref = new BoolPreference("ParrelSync_ShownClonesOpenStatus", true);
-        public BoolPreference UnityLockFileOPenStasPref = new BoolPreference("ParrelSync_CheckUnityLockFileOpenStatus", true);
+        public static BoolPreference ClonProOpenStasPref = new BoolPreference("ParrelSync_ShownClonesOpenStatus", true);
+        public static BoolPreference UnityLockFileOPenStasPref = new BoolPreference("ParrelSync_CheckUnityLockFileOpenStatus", true);
 
         private void OnGUI()
         {
