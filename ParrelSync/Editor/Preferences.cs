@@ -55,10 +55,21 @@ namespace ParrelSync
             window.Show();
         }
 
+        /// <summary>
+        /// Disable asset saving in clone editors?
+        /// </summary>
         public static BoolPreference AssetModPref = new BoolPreference("ParrelSync_DisableClonesAssetSaving", true);
 
+        /// <summary>
+        /// Show Project clones open status?
+        /// </summary>
         public static BoolPreference ClonProOpenStasPref = new BoolPreference("ParrelSync_ShownClonesOpenStatus", true);
-        public static BoolPreference UnityLockFileOPenStasPref = new BoolPreference("ParrelSync_CheckUnityLockFileOpenStatus", true);
+        /// <summary>
+        /// If show project clones open status, 
+        /// in addition of checking the existence of UnityLockFile, 
+        /// also check is the lock file opened by another program.
+        /// </summary>
+        public static BoolPreference UnityLockFileOpenStasPref = new BoolPreference("ParrelSync_CheckUnityLockFileOpenStatus", true);
 
         private void OnGUI()
         {
@@ -79,9 +90,9 @@ namespace ParrelSync
             if (ClonProOpenStasPref.GetValue())
             {
                 EditorGUI.indentLevel++;
-                UnityLockFileOPenStasPref.SetValue(
+                UnityLockFileOpenStasPref.SetValue(
                    EditorGUILayout.ToggleLeft("Check is UnityLockFile opened",
-                   UnityLockFileOPenStasPref.GetValue())
+                   UnityLockFileOpenStasPref.GetValue())
                 );
                 EditorGUI.indentLevel--;
             }
@@ -91,7 +102,7 @@ namespace ParrelSync
             {
                 AssetModPref.ClearValue();
                 ClonProOpenStasPref.ClearValue();
-                UnityLockFileOPenStasPref.ClearValue();
+                UnityLockFileOpenStasPref.ClearValue();
                 Debug.Log("Editor preferences cleared");
             }
             GUILayout.EndVertical();
