@@ -20,7 +20,7 @@ namespace ParrelSync
                         "Asset modifications saving are blocked in the clone instance. \n\n" +
                         "This is a clone of the original project. \n" +
                         "Making changes to asset files via the clone editor is not recommended. \n" +
-                        "Please use the original editor instance if you want to make changes the project files.",
+                        "Please use the original editor window if you want to make changes to the project files.",
                         "ok"
                     );
                     foreach (var path in paths)
