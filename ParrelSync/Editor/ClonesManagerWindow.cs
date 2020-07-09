@@ -113,28 +113,22 @@ namespace ParrelSync
                         GUILayout.BeginVertical("GroupBox");
                         string cloneProjectPath = cloneProjectsPath[i];
 
-                        bool? isOpenInAnotherInstance = null;
-                        if (Preferences.ClonProOpenStasPref.GetValue())
-                        {
-                            //Determine whether it is opened in another instance by checking the UnityLockFile
-                            string UnityLockFilePath = Path.Combine(cloneProjectPath, "Temp", "UnityLockfile");
+                       
 
+                        //Determine whether it is opened in another instance by checking the UnityLockFile
+                        string UnityLockFilePath = Path.Combine(cloneProjectPath, "Temp", "UnityLockfile");
 
-                            if (Preferences.UnityLockFileOpenStasPref.GetValue())
-                                isOpenInAnotherInstance = File.Exists(UnityLockFilePath) && FileUtilities.IsFileLocked(UnityLockFilePath);
-                            else
-                                isOpenInAnotherInstance = File.Exists(UnityLockFilePath);
-
-                            if (isOpenInAnotherInstance == true)
-                                EditorGUILayout.LabelField("Clone " + i + " (Running)", EditorStyles.boldLabel);
-                            else
-                                EditorGUILayout.LabelField("Clone " + i);
-                        }
+                        bool isOpenInAnotherInstance = false;
+                        if (Preferences.AlsoCheckUnityLockFileStaPref.GetValue())
+                            isOpenInAnotherInstance = File.Exists(UnityLockFilePath) && FileUtilities.IsFileLocked(UnityLockFilePath);
                         else
-                        {
-                            EditorGUILayout.LabelField("Clone " + i);
-                        }
+                            isOpenInAnotherInstance = File.Exists(UnityLockFilePath);
 
+
+                        if (isOpenInAnotherInstance == true)
+                            EditorGUILayout.LabelField("Clone " + i + " (Running)", EditorStyles.boldLabel);
+                        else
+                            EditorGUILayout.LabelField("Clone " + i);
 
 
                         GUILayout.BeginHorizontal();
@@ -177,8 +171,8 @@ namespace ParrelSync
                         EditorGUILayout.Space();
                         EditorGUILayout.Space();
 
-                        if (isOpenInAnotherInstance != null)
-                            EditorGUI.BeginDisabledGroup((bool)isOpenInAnotherInstance);
+
+                        EditorGUI.BeginDisabledGroup(isOpenInAnotherInstance);
 
                         if (GUILayout.Button("Open in New Editor"))
                         {

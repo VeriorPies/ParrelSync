@@ -61,15 +61,10 @@ namespace ParrelSync
         public static BoolPreference AssetModPref = new BoolPreference("ParrelSync_DisableClonesAssetSaving", true);
 
         /// <summary>
-        /// Show Project clones open status?
+        /// In addition of checking the existence of UnityLockFile, 
+        /// also check is the is the UnityLockFile being opened.
         /// </summary>
-        public static BoolPreference ClonProOpenStasPref = new BoolPreference("ParrelSync_ShownClonesOpenStatus", true);
-        /// <summary>
-        /// If show project clones open status, 
-        /// in addition of checking the existence of UnityLockFile, 
-        /// also check is the lock file opened by another program.
-        /// </summary>
-        public static BoolPreference UnityLockFileOpenStasPref = new BoolPreference("ParrelSync_CheckUnityLockFileOpenStatus", true);
+        public static BoolPreference AlsoCheckUnityLockFileStaPref = new BoolPreference("ParrelSync_CheckUnityLockFileOpenStatus", true);
 
         private void OnGUI()
         {
@@ -86,31 +81,22 @@ namespace ParrelSync
             GUILayout.BeginVertical("GroupBox");
 
             AssetModPref.SetValue(
-                 EditorGUILayout.ToggleLeft("(recommended) Disable asset saving in clone editors, require re-open clone editors",
+                 EditorGUILayout.ToggleLeft("(recommended) Disable asset saving in clone editors- require re-open clone editors",
                  AssetModPref.GetValue())
             );
 
-            ClonProOpenStasPref.SetValue(
-                EditorGUILayout.ToggleLeft("Show clone project open status in clone manager",
-                ClonProOpenStasPref.GetValue())
+
+            AlsoCheckUnityLockFileStaPref.SetValue(
+               EditorGUILayout.ToggleLeft("Also check UnityLockFile lock status while checking clone projects running status",
+               AlsoCheckUnityLockFileStaPref.GetValue())
             );
 
-            if (ClonProOpenStasPref.GetValue())
-            {
-                EditorGUI.indentLevel++;
-                UnityLockFileOpenStasPref.SetValue(
-                   EditorGUILayout.ToggleLeft("Check is UnityLockFile opened",
-                   UnityLockFileOpenStasPref.GetValue())
-                );
-                EditorGUI.indentLevel--;
-            }
 
             GUILayout.EndVertical();
             if (GUILayout.Button("Reset to default"))
             {
                 AssetModPref.ClearValue();
-                ClonProOpenStasPref.ClearValue();
-                UnityLockFileOpenStasPref.ClearValue();
+                AlsoCheckUnityLockFileStaPref.ClearValue();
                 Debug.Log("Editor preferences cleared");
             }
             GUILayout.EndVertical();
