@@ -34,7 +34,7 @@ namespace ParrelSync
 
         private void OnGUI()
         {
-            if(Application.platform == RuntimePlatform.OSXEditor || Application.platform == RuntimePlatform.LinuxEditor)
+            if (Application.platform == RuntimePlatform.OSXEditor || Application.platform == RuntimePlatform.LinuxEditor)
             {
                 EditorGUILayout.HelpBox(
                        "Sorry, but " + ClonesManager.ProjectName + " doesn't support Mac and Linux currently.\n" +
@@ -49,7 +49,7 @@ namespace ParrelSync
 
             /// If it is a clone project...
             if (ClonesManager.IsClone())
-            {               
+            {
                 //Find out the original project name and show the help box
                 string originalProjectPath = ClonesManager.GetOriginalProjectPath();
                 if (originalProjectPath == string.Empty)
@@ -105,7 +105,7 @@ namespace ParrelSync
 
                     //List all clones
                     clonesScrollPos =
-                         EditorGUILayout.BeginScrollView(clonesScrollPos);                  
+                         EditorGUILayout.BeginScrollView(clonesScrollPos);
                     var cloneProjectsPath = ClonesManager.GetCloneProjectsPath();
                     for (int i = 0; i < cloneProjectsPath.Count; i++)
                     {
@@ -113,13 +113,19 @@ namespace ParrelSync
                         GUILayout.BeginVertical("GroupBox");
                         string cloneProjectPath = cloneProjectsPath[i];
 
-                        //Determine whether it is opened in another instance by checking the UnityLockFile 
+                       
 
+                        //Determine whether it is opened in another instance by checking the UnityLockFile
                         string UnityLockFilePath = Path.Combine(cloneProjectPath, "Temp", "UnityLockfile");
 
-                        bool isOpenInAnotherInstance = File.Exists(UnityLockFilePath) && FileUtilities.IsFileLocked(UnityLockFilePath);
+                        bool isOpenInAnotherInstance = false;
+                        if (Preferences.AlsoCheckUnityLockFileStaPref.GetValue())
+                            isOpenInAnotherInstance = File.Exists(UnityLockFilePath) && FileUtilities.IsFileLocked(UnityLockFilePath);
+                        else
+                            isOpenInAnotherInstance = File.Exists(UnityLockFilePath);
 
-                        if (isOpenInAnotherInstance)
+
+                        if (isOpenInAnotherInstance == true)
                             EditorGUILayout.LabelField("Clone " + i + " (Running)", EditorStyles.boldLabel);
                         else
                             EditorGUILayout.LabelField("Clone " + i);
@@ -129,7 +135,7 @@ namespace ParrelSync
                         EditorGUILayout.TextField("Clone project path", cloneProjectPath, EditorStyles.textField);
                         if (GUILayout.Button("View Folder", GUILayout.Width(80)))
                         {
-                            ClonesManager.OpenProjectInFileExplorer(cloneProjectPath);                           
+                            ClonesManager.OpenProjectInFileExplorer(cloneProjectPath);
                         }
                         GUILayout.EndHorizontal();
 
@@ -165,7 +171,9 @@ namespace ParrelSync
                         EditorGUILayout.Space();
                         EditorGUILayout.Space();
 
+
                         EditorGUI.BeginDisabledGroup(isOpenInAnotherInstance);
+
                         if (GUILayout.Button("Open in New Editor"))
                         {
                             ClonesManager.OpenProject(cloneProjectPath);
@@ -184,7 +192,7 @@ namespace ParrelSync
                                 ClonesManager.DeleteClone(cloneProjectPath);
                             }
                         }
-                       
+
                         GUILayout.EndHorizontal();
                         EditorGUI.EndDisabledGroup();
                         GUILayout.EndVertical();
