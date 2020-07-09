@@ -13,13 +13,13 @@ namespace ParrelSync
         {
             if (ClonesManager.IsClone() && Preferences.AssetModPref.GetValue())
             {
-                if (!EditorQuit.IsQuiting)
+                if (paths != null && paths.Length > 0 && !EditorQuit.IsQuiting)
                 {
                     EditorUtility.DisplayDialog(
                         ClonesManager.ProjectName + ": Asset modifications saving detected and blocked",
                         "Asset modifications saving are blocked in the clone instance. \n\n" +
                         "This is a clone of the original project. \n" +
-                        "Making changes to asset files via the clone editor is not recommended. \n"+
+                        "Making changes to asset files via the clone editor is not recommended. \n" +
                         "Please use the original editor instance if you want to make changes the project files.",
                         "ok"
                     );
