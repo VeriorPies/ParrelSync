@@ -80,7 +80,7 @@ namespace ParrelSync
             {
                 EditorGUI.indentLevel++;
                 UnityLockFileOPenStasPref.SetValue(
-                   EditorGUILayout.ToggleLeft("Check is UnityLockFile locked by other program",
+                   EditorGUILayout.ToggleLeft("Check is UnityLockFile opened",
                    UnityLockFileOPenStasPref.GetValue())
                 );
                 EditorGUI.indentLevel--;
