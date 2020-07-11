@@ -119,7 +119,7 @@ namespace ParrelSync
                         string UnityLockFilePath = Path.Combine(cloneProjectPath, "Temp", "UnityLockfile");
 
                         bool isOpenInAnotherInstance = false;
-                        if (Preferences.AlsoCheckUnityLockFileStaPref.GetValue())
+                        if (Preferences.AlsoCheckUnityLockFileStaPref.Value)
                             isOpenInAnotherInstance = File.Exists(UnityLockFilePath) && FileUtilities.IsFileLocked(UnityLockFilePath);
                         else
                             isOpenInAnotherInstance = File.Exists(UnityLockFilePath);

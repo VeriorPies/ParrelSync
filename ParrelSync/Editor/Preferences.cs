@@ -20,22 +20,24 @@ namespace ParrelSync
 
         private bool? valueCache = null;
 
-        public bool GetValue()
+        public bool Value
         {
-            if (valueCache == null)
-                valueCache = EditorPrefs.GetBool(key, defaultValue);
+            get
+            {
+                if (valueCache == null)
+                    valueCache = EditorPrefs.GetBool(key, defaultValue);
 
-            return (bool)valueCache;
-        }
+                return (bool)valueCache;
+            }
+            set
+            {
+                if (valueCache == value)
+                    return;
 
-        public void SetValue(bool value)
-        {
-            if (valueCache == value)
-                return;
-
-            EditorPrefs.SetBool(key, value);
-            valueCache = value;
-            Debug.Log("Editor preference updated. key: " + key + ", value: " + value);
+                EditorPrefs.SetBool(key, value);
+                valueCache = value;
+                Debug.Log("Editor preference updated. key: " + key + ", value: " + value);
+            }
         }
 
         public void ClearValue()
@@ -80,17 +82,8 @@ namespace ParrelSync
             GUILayout.Label("Preferences");
             GUILayout.BeginVertical("GroupBox");
 
-            AssetModPref.SetValue(
-                 EditorGUILayout.ToggleLeft("(recommended) Disable asset saving in clone editors- require re-open clone editors",
-                 AssetModPref.GetValue())
-            );
-
-
-            AlsoCheckUnityLockFileStaPref.SetValue(
-               EditorGUILayout.ToggleLeft("Also check UnityLockFile lock status while checking clone projects running status",
-               AlsoCheckUnityLockFileStaPref.GetValue())
-            );
-
+            AssetModPref.Value = EditorGUILayout.ToggleLeft("(recommended) Disable asset saving in clone editors- require re-open clone editors", AssetModPref.Value);
+            AlsoCheckUnityLockFileStaPref.Value = EditorGUILayout.ToggleLeft("Also check UnityLockFile lock status while checking clone projects running status", AlsoCheckUnityLockFileStaPref.Value);
 
             GUILayout.EndVertical();
             if (GUILayout.Button("Reset to default"))
