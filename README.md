@@ -18,7 +18,7 @@ ParrelSync allows users to test multiplayer gameplay without building by open mu
 1. Backup your project folder or use a version control system such as [Git](https://git-scm.com/) or [SVN](https://subversion.apache.org/)
 2. Download .unitypackage from the [latest release](https://github.com/VeriorPies/ParrelSync/releases) and import it to your project. 
 3.  Parrel Sync should appreared in the menu item bar after imported
-![UpdateButtonInMenu](https://github.com/VeriorPies/ParrelSync/raw/master/Images/AfterImported.png =350x)  
+![UpdateButtonInMenu](https://github.com/VeriorPies/ParrelSync/raw/master/Images/AfterImported.png)  
 
 Check out the [Installation-and-Update](https://github.com/VeriorPies/ParrelSync/wiki/Installation-and-Update) page for more details.
 
