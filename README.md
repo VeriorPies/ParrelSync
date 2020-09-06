@@ -1,9 +1,7 @@
 # ParrelSync 
 [![Release](https://img.shields.io/github/v/release/VeriorPies/ParrelSync?include_prereleases)](https://github.com/VeriorPies/ParrelSync/releases) [![Documentation](https://img.shields.io/badge/documentation-brightgreen.svg)](https://github.com/VeriorPies/ParrelSync/wiki) [![License](https://img.shields.io/badge/license-MIT-green)](https://github.com/VeriorPies/ParrelSync/blob/master/LICENSE.md) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-blue.svg)](https://github.com/VeriorPies/ParrelSync/pulls) [![Chats](https://img.shields.io/discord/710688100996743200)](https://discord.gg/TmQk2qG)  
 
-ParrelSync is a Unity editor extension for improving multiplayer testing workflow.  
-<br>
-ParrelSync allows users to test multiplayer gameplay without building by open multiple editor instances of the same project to have it run as another client/server. This significantly improved the multiplayer testing workflow since more stats can be monitored/changed from the editor windows and also save plenty of time from building the project.
+ParrelSync is a Unity editor extension that allows users to test multiplayer gameplay without building the project by having another Unity editor window opened and mirror the changes from the original project.
 
 <br>
 
@@ -14,6 +12,11 @@ ParrelSync allows users to test multiplayer gameplay without building by open mu
 <br>
 </p>
 
+## Features
+1. Test multiplayer gameplay without building the project
+2. GUI tools for managing all project clones
+3. Protected assets from being modified by other clone instances
+4. Handy APIs to speed up testing workflows
 ## Installation
 1. Backup your project folder or use a version control system such as [Git](https://git-scm.com/) or [SVN](https://subversion.apache.org/)
 2. Download .unitypackage from the [latest release](https://github.com/VeriorPies/ParrelSync/releases) and import it to your project. 
