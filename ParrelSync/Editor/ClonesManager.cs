@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 using UnityEditor;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.IO;
+using Debug = UnityEngine.Debug;
 
 namespace ParrelSync
 {
@@ -40,12 +42,14 @@ namespace ParrelSync
         /// Name of the file for storing clone's argument.
         /// </summary>
         public const string ArgumentFileName = ".parrelsyncarg";
+
         /// <summary>
         /// Default argument of the new clone
         /// </summary>
         public const string DefaultArgument = "client";
 
         #region Managing clones
+
         /// <summary>
         /// Creates clone from the project currently open in Unity Editor.
         /// </summary>
@@ -85,6 +89,7 @@ namespace ParrelSync
                     break;
                 }
             }
+
             if (string.IsNullOrEmpty(cloneProjectPath))
             {
                 Debug.LogError("The number of cloned projects has reach its limit. Limit: " + MaxCloneProjectCount);
@@ -138,16 +143,30 @@ namespace ParrelSync
                 Debug.LogError("Cannot open the project - provided folder (" + projectPath + ") does not exist.");
                 return;
             }
+
             if (projectPath == ClonesManager.GetCurrentProjectPath())
             {
                 Debug.LogError("Cannot open the project - it is already open.");
                 return;
             }
 
-            string fileName = EditorApplication.applicationPath;
+            string fileName = GetApplicationPath();
             string args = "-projectPath \"" + projectPath + "\"";
             Debug.Log("Opening project \"" + fileName + " " + args + "\"");
             ClonesManager.StartHiddenConsoleProcess(fileName, args);
+        }
+
+        private static string GetApplicationPath()
+        {
+            switch (Application.platform)
+            {
+                case RuntimePlatform.WindowsEditor:
+                    return EditorApplication.applicationPath;
+                case RuntimePlatform.OSXEditor:
+                    return EditorApplication.applicationPath + "/Contents/MacOS/Unity";
+                default:
+                    throw new System.NotImplementedException("Platform has not supported yet ;(");
+            }
         }
 
         /// <summary>
@@ -163,6 +182,8 @@ namespace ParrelSync
             if (cloneProjectPath == ClonesManager.GetOriginalProjectPath()) return;
 
             //Check what OS is
+            string identifierFile;
+            string args;
             switch (Application.platform)
             {
                 case (RuntimePlatform.WindowsEditor):
@@ -171,28 +192,38 @@ namespace ParrelSync
                     //The argument file will be deleted first at the beginning of the project deletion process 
                     //to prevent any further reading and writing to it(There's a File.Exist() check at the (file)editor windows.)
                     //If there's any file in the directory being write/read during the deletion process, the directory can't be fully removed.
-                    string identifierFile = Path.Combine(cloneProjectPath, ClonesManager.ArgumentFileName);
+                    identifierFile = Path.Combine(cloneProjectPath, ClonesManager.ArgumentFileName);
                     File.Delete(identifierFile);
 
-                    string args = "/c " + @"rmdir /s/q " + string.Format("\"{0}\"", cloneProjectPath);
+                    args = "/c " + @"rmdir /s/q " + string.Format("\"{0}\"", cloneProjectPath);
                     StartHiddenConsoleProcess("cmd.exe", args);
 
                     break;
                 case (RuntimePlatform.OSXEditor):
-                    throw new System.NotImplementedException("No Mac function implement yet :(");
-                //break;
+                    Debug.Log("Attempting to delete folder \"" + cloneProjectPath + "\"");
+
+                    //The argument file will be deleted first at the beginning of the project deletion process 
+                    //to prevent any further reading and writing to it(There's a File.Exist() check at the (file)editor windows.)
+                    //If there's any file in the directory being write/read during the deletion process, the directory can't be fully removed.
+                    identifierFile = Path.Combine(cloneProjectPath, ClonesManager.ArgumentFileName);
+                    File.Delete(identifierFile);
+
+                    FileUtil.DeleteFileOrDirectory(cloneProjectPath);
+
+                    break;
                 case (RuntimePlatform.LinuxEditor):
                     throw new System.NotImplementedException("No linux support yet :(");
                 //break;
                 default:
                     Debug.LogWarning("Not in a known editor. Where are you!?");
                     break;
-
             }
         }
+
         #endregion
 
         #region Creating project folders
+
         /// <summary>
         /// Creates an empty folder using data in the given Project object
         /// </summary>
@@ -218,11 +249,14 @@ namespace ParrelSync
             }
 
             Debug.Log("Library copy: " + destinationProject.libraryPath);
-            ClonesManager.CopyDirectoryWithProgressBar(sourceProject.libraryPath, destinationProject.libraryPath, "Cloning project '" + sourceProject.name + "'. ");
+            ClonesManager.CopyDirectoryWithProgressBar(sourceProject.libraryPath, destinationProject.libraryPath,
+                "Cloning project '" + sourceProject.name + "'. ");
         }
+
         #endregion
 
         #region Creating symlinks
+
         /// <summary>
         /// Creates a symlink between destinationPath and sourcePath (Mac version).
         /// </summary>
@@ -232,10 +266,13 @@ namespace ParrelSync
         {
             Debug.LogWarning("This hasn't been tested yet!");
 
-            string cmd = "ln " + string.Format("\"{0}\" \"{1}\"", destinationPath, sourcePath);
-            Debug.Log("Mac hard link " + cmd);
+            sourcePath = sourcePath.Replace(" ", "\\ ");
+            destinationPath = destinationPath.Replace(" ", "\\ ");
+            var command = $"ln -s {sourcePath} {destinationPath}";
 
-            ClonesManager.StartHiddenConsoleProcess("/bin/bash", cmd);
+            Debug.Log("Mac hard link " + command);
+
+            ClonesManager.ExecuteBashCommand(command);
         }
 
         /// <summary>
@@ -288,11 +325,13 @@ namespace ParrelSync
                 Debug.LogWarning("Skipping Asset link, it already exists: " + destinationPath);
             }
         }
+
         #endregion
 
         #region Utility methods
 
         private static bool? isCloneFileExistCache = null;
+
         /// <summary>
         /// Returns true if the project currently open in Unity Editor is a clone.
         /// </summary>
@@ -305,7 +344,8 @@ namespace ParrelSync
                 string cloneFilePath = Path.Combine(ClonesManager.GetCurrentProjectPath(), ClonesManager.CloneFileName);
                 isCloneFileExistCache = File.Exists(cloneFilePath);
             }
-            return (bool)isCloneFileExistCache;
+
+            return (bool) isCloneFileExistCache;
         }
 
         /// <summary>
@@ -343,6 +383,7 @@ namespace ParrelSync
                     argument = File.ReadAllText(argumentFilePath, System.Text.Encoding.UTF8);
                 }
             }
+
             return argument;
         }
 
@@ -391,6 +432,7 @@ namespace ParrelSync
                 if (Directory.Exists(cloneProjectPath))
                     projectsPath.Add(cloneProjectPath);
             }
+
             return projectsPath;
         }
 
@@ -400,7 +442,8 @@ namespace ParrelSync
         /// <param name="source">Directory to be copied.</param>
         /// <param name="destination">Destination directory (created automatically if needed).</param>
         /// <param name="progressBarPrefix">Optional string added to the beginning of the progress bar window header.</param>
-        public static void CopyDirectoryWithProgressBar(string sourcePath, string destinationPath, string progressBarPrefix = "")
+        public static void CopyDirectoryWithProgressBar(string sourcePath, string destinationPath,
+            string progressBarPrefix = "")
         {
             var source = new DirectoryInfo(sourcePath);
             var destination = new DirectoryInfo(destinationPath);
@@ -408,7 +451,8 @@ namespace ParrelSync
             long totalBytes = 0;
             long copiedBytes = 0;
 
-            ClonesManager.CopyDirectoryWithProgressBarRecursive(source, destination, ref totalBytes, ref copiedBytes, progressBarPrefix);
+            ClonesManager.CopyDirectoryWithProgressBarRecursive(source, destination, ref totalBytes, ref copiedBytes,
+                progressBarPrefix);
             EditorUtility.ClearProgressBar();
         }
 
@@ -421,7 +465,8 @@ namespace ParrelSync
         /// <param name="totalBytes">Total bytes to be copied. Calculated automatically, initialize at 0.</param>
         /// <param name="copiedBytes">To track already copied bytes. Calculated automatically, initialize at 0.</param>
         /// <param name="progressBarPrefix">Optional string added to the beginning of the progress bar window header.</param>
-        private static void CopyDirectoryWithProgressBarRecursive(DirectoryInfo source, DirectoryInfo destination, ref long totalBytes, ref long copiedBytes, string progressBarPrefix = "")
+        private static void CopyDirectoryWithProgressBarRecursive(DirectoryInfo source, DirectoryInfo destination,
+            ref long totalBytes, ref long copiedBytes, string progressBarPrefix = "")
         {
             /// Directory cannot be copied into itself.
             if (source.FullName.ToLower() == destination.FullName.ToLower())
@@ -459,7 +504,7 @@ namespace ParrelSync
                 copiedBytes += file.Length;
 
                 /// Display the progress bar.
-                float progress = (float)copiedBytes / (float)totalBytes;
+                float progress = (float) copiedBytes / (float) totalBytes;
                 bool cancelCopy = EditorUtility.DisplayCancelableProgressBar(
                     progressBarPrefix + "Copying '" + source.FullName + "' to '" + destination.FullName + "'...",
                     "(" + (progress * 100f).ToString("F2") + "%) Copying file '" + file.Name + "'...",
@@ -471,7 +516,8 @@ namespace ParrelSync
             foreach (DirectoryInfo sourceNestedDir in source.GetDirectories())
             {
                 DirectoryInfo nextDestingationNestedDir = destination.CreateSubdirectory(sourceNestedDir.Name);
-                ClonesManager.CopyDirectoryWithProgressBarRecursive(sourceNestedDir, nextDestingationNestedDir, ref totalBytes, ref copiedBytes, progressBarPrefix);
+                ClonesManager.CopyDirectoryWithProgressBarRecursive(sourceNestedDir, nextDestingationNestedDir,
+                    ref totalBytes, ref copiedBytes, progressBarPrefix);
             }
         }
 
@@ -482,9 +528,11 @@ namespace ParrelSync
         /// <param name="includeNested">If true, size will include all nested directories.</param>
         /// <param name="progressBarPrefix">Optional string added to the beginning of the progress bar window header.</param>
         /// <returns>Size of the directory in bytes.</returns>
-        private static long GetDirectorySize(DirectoryInfo directory, bool includeNested = false, string progressBarPrefix = "")
+        private static long GetDirectorySize(DirectoryInfo directory, bool includeNested = false,
+            string progressBarPrefix = "")
         {
-            EditorUtility.DisplayProgressBar(progressBarPrefix + "Calculating size of directories...", "Scanning '" + directory.FullName + "'...", 0f);
+            EditorUtility.DisplayProgressBar(progressBarPrefix + "Calculating size of directories...",
+                "Scanning '" + directory.FullName + "'...", 0f);
 
             /// Calculate size of all files in directory.
             long filesSize = directory.EnumerateFiles().Sum((FileInfo file) => file.Length);
@@ -510,12 +558,40 @@ namespace ParrelSync
         /// <param name="args"></param>
         private static void StartHiddenConsoleProcess(string fileName, string args)
         {
-            var process = new System.Diagnostics.Process();
-            process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-            process.StartInfo.FileName = fileName;
-            process.StartInfo.Arguments = args;
+            System.Diagnostics.Process.Start(fileName, args);
+        }
 
-            process.Start();
+        /// <summary>
+        /// Thanks to https://github.com/karl-/unity-symlink-utility/blob/master/SymlinkUtility.cs
+        /// </summary>
+        /// <param name="command"></param>
+        private static void ExecuteBashCommand(string command)
+        {
+            command = command.Replace("\"", "\"\"");
+
+            var proc = new Process()
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "/bin/bash",
+                    Arguments = "-c \"" + command + "\"",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                }
+            };
+
+            using (proc)
+            {
+                proc.Start();
+                proc.WaitForExit();
+
+                if (!proc.StandardError.EndOfStream)
+                {
+                    UnityEngine.Debug.LogError(proc.StandardError.ReadToEnd());
+                }
+            }
         }
         
         public static void OpenProjectInFileExplorer(string path)
