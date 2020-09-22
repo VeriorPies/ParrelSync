@@ -170,6 +170,37 @@ namespace ParrelSync
         }
 
         /// <summary>
+        /// Is this project being opened by an Unity editor?
+        /// </summary>
+        /// <param name="projectPath"></param>
+        /// <returns></returns>
+        public static bool IsCloneProjectRunning(string projectPath)
+        {
+
+            //Determine whether it is opened in another instance by checking the UnityLockFile
+            string UnityLockFilePath = Path.Combine(projectPath, "Temp", "UnityLockfile");
+
+            switch (Application.platform)
+            {
+                case (RuntimePlatform.WindowsEditor):
+                    //Windows editor will lock "UnityLockfile" file when project is being opened.
+                    //Sometime, for instance: windows editor crash, the "UnityLockfile" will not be deleted even the project
+                    //isn't being opened, so a check to the "UnityLockfile" lock status may be necessary.
+                    if (Preferences.AlsoCheckUnityLockFileStaPref.Value)
+                        return File.Exists(UnityLockFilePath) && FileUtilities.IsFileLocked(UnityLockFilePath);
+                    else
+                         return File.Exists(UnityLockFilePath);
+                case (RuntimePlatform.OSXEditor):
+                    //Mac editor won't lock "UnityLockfile" file when project is being opened
+                    return File.Exists(UnityLockFilePath);
+                case (RuntimePlatform.LinuxEditor):
+                    throw new System.NotImplementedException("IsCloneProjectRunning: No linux implementation yet.");
+                default:
+                    throw new System.NotImplementedException("IsCloneProjectRunning: Unsupport Platfrom: " + Application.platform);
+            }
+        }
+
+        /// <summary>
         /// Deletes the clone of the currently open project, if such exists.
         /// </summary>
         public static void DeleteClone(string cloneProjectPath)
@@ -264,8 +295,6 @@ namespace ParrelSync
         /// <param name="destinationPath"></param>
         private static void CreateLinkMac(string sourcePath, string destinationPath)
         {
-            Debug.LogWarning("This hasn't been tested yet!");
-
             sourcePath = sourcePath.Replace(" ", "\\ ");
             destinationPath = destinationPath.Replace(" ", "\\ ");
             var command = $"ln -s {sourcePath} {destinationPath}";
@@ -313,10 +342,10 @@ namespace ParrelSync
                         CreateLinkMac(sourcePath, destinationPath);
                         break;
                     case (RuntimePlatform.LinuxEditor):
-                        throw new System.NotImplementedException("No linux support yet :(");
+                        throw new System.NotImplementedException("LinkFolders: No linux support yet.");
                     //break;
                     default:
-                        Debug.LogWarning("Not in a known editor. Where are you!?");
+                        Debug.LogWarning("Not in a known editor. Application.platform: " + Application.platform);
                         break;
                 }
             }

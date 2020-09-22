@@ -88,14 +88,17 @@ namespace ParrelSync
                     "Disable asset saving in clone editors so all assets can only be modified from the original project editor"
                 ),
                 AssetModPref.Value);
-            AlsoCheckUnityLockFileStaPref.Value = EditorGUILayout.ToggleLeft(
-                new GUIContent(
-                    "Also check UnityLockFile lock status while checking clone projects running status",
-                    "Disable this can slightly increase Clones Manager window performance, but will lead to in-correct clone project running status" +
-                    "(the Clones Manager window show the clone project is still running even it's not) if the clone editor crashed"
-                ),
-                AlsoCheckUnityLockFileStaPref.Value);
 
+            if (Application.platform == RuntimePlatform.WindowsEditor)
+            {
+                AlsoCheckUnityLockFileStaPref.Value = EditorGUILayout.ToggleLeft(
+                    new GUIContent(
+                        "Also check UnityLockFile lock status while checking clone projects running status",
+                        "Disable this can slightly increase Clones Manager window performance, but will lead to in-correct clone project running status" +
+                        "(the Clones Manager window show the clone project is still running even it's not) if the clone editor crashed"
+                    ),
+                    AlsoCheckUnityLockFileStaPref.Value);
+            }
             GUILayout.EndVertical();
             if (GUILayout.Button("Reset to default"))
             {
