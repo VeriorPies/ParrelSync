@@ -27,10 +27,11 @@ Check out the [Installation-and-Update](https://github.com/VeriorPies/ParrelSync
 
 
 ## Supported Platform
-Currently, ParrelSync only supports Windows editor.  
-Please create a [feature request](https://github.com/VeriorPies/ParrelSync/issues/new/choose) if you want Mac/Linux support to be added. 
+Currently, ParrelSync supports Windows and macOS editors.  
+Please create a [feature request](https://github.com/VeriorPies/ParrelSync/issues/new/choose) if you want Linux support to be added. 
 
 ParrelSync has been tested with the following Unity version. However, it should also work with other versions as well.
+* *2020.1.2f1*
 * *2019.3.0f6*
 * *2018.4.22f1*
 

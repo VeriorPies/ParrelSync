@@ -34,10 +34,10 @@ namespace ParrelSync
 
         private void OnGUI()
         {
-            if (Application.platform == RuntimePlatform.OSXEditor || Application.platform == RuntimePlatform.LinuxEditor)
+            if (Application.platform == RuntimePlatform.LinuxEditor)
             {
                 EditorGUILayout.HelpBox(
-                       "Sorry, but " + ClonesManager.ProjectName + " doesn't support Mac and Linux currently.\n" +
+                       "Sorry, but " + ClonesManager.ProjectName + " doesn't support Linux currently.\n" +
                        "Please create a feature request on GitHub issue page if you want it to be added.",
                        MessageType.Info);
                 if (GUILayout.Button("Open GitHub issue Page"))
@@ -113,17 +113,7 @@ namespace ParrelSync
                         GUILayout.BeginVertical("GroupBox");
                         string cloneProjectPath = cloneProjectsPath[i];
 
-                       
-
-                        //Determine whether it is opened in another instance by checking the UnityLockFile
-                        string UnityLockFilePath = Path.Combine(cloneProjectPath, "Temp", "UnityLockfile");
-
-                        bool isOpenInAnotherInstance = false;
-                        if (Preferences.AlsoCheckUnityLockFileStaPref.Value)
-                            isOpenInAnotherInstance = File.Exists(UnityLockFilePath) && FileUtilities.IsFileLocked(UnityLockFilePath);
-                        else
-                            isOpenInAnotherInstance = File.Exists(UnityLockFilePath);
-
+                        bool isOpenInAnotherInstance = ClonesManager.IsCloneProjectRunning(cloneProjectPath);
 
                         if (isOpenInAnotherInstance == true)
                             EditorGUILayout.LabelField("Clone " + i + " (Running)", EditorStyles.boldLabel);
