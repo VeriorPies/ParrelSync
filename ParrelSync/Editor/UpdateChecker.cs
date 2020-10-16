@@ -48,7 +48,7 @@ namespace ParrelSync.Update
                 catch (Exception exp)
                 {
                     Debug.LogError("Error with checking update. Exception: " + exp);
-                    EditorUtility.DisplayDialog("Update Error","Error with checking update. \nSee console fore more details.",
+                    EditorUtility.DisplayDialog("Update Error","Error with checking update. \nSee console for more details.",
                      "OK"
                     );
                 }
