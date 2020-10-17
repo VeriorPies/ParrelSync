@@ -31,6 +31,7 @@ After Unity 2019.3.4f1, Unity 2020.1a21, that support path query parameter of gi
 ![UPM_Image2](/Images/UPM_2.png?raw=true)
 <br>
 or add `"com.veriorpies.parrelsync": "https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync"` to `Packages/manifest.json`.
+<br>
 If you want to set a target version, ParrelSync is using `*.*.*` release tag so you can specify a version like `#1.4.1`. For example `https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync#2.0.36`.
 
 ## Supported Platform
