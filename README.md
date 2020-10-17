@@ -27,6 +27,8 @@ Check out the [Installation-and-Update](https://github.com/VeriorPies/ParrelSync
 
 ## UPM Package
 After Unity 2019.3.4f1, Unity 2020.1a21, that support path query parameter of git package. You can add `https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync` to Package Manager
+![UPM_Image](/Images/UPM_1.png?raw=true)
+![UPM_Image2](/Images/UPM_2.png?raw=true)
 or add `"com.veriorpies.parrelsync": "https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync"` to `Packages/manifest.json`.
 If you want to set a target version, ParrelSync is using `*.*.*` release tag so you can specify a version like `#1.4.1`. For example `https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync#2.0.36`.
 
