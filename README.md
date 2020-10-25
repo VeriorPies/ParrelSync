@@ -27,13 +27,14 @@ ParrelSync is a Unity editor extension that allows users to test multiplayer gam
 Check out the [Installation-and-Update](https://github.com/VeriorPies/ParrelSync/wiki/Installation-and-Update) page for more details.
 
 ### UPM Package
-ParrelSync can also be installed via UPM package. After Unity 2019.3.4f1, Unity 2020.1a21, that support path query parameter of git package. You can add `https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync` to Package Manager
+ParrelSync can also be installed via UPM package. After Unity 2019.3.4f1, Unity 2020.1a21, that support path query parameter of git package. You can add `https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync` to Package Manager 
+<br>
 ![UPM_Image](/Images/UPM_1.png?raw=true)
 ![UPM_Image2](/Images/UPM_2.png?raw=true)
 <br>
 or add `"com.veriorpies.parrelsync": "https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync"` to `Packages/manifest.json`.
 <br>
-If you want to set a target version, ParrelSync is using `*.*.*` release tag so you can specify a version like `#1.4.1`. For example `https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync#2.0.36`.
+If you want to set a target version, ParrelSync is using `*.*.*` release tag so you can specify a version like `#1.4.1`. For example:  `https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync#2.0.36`.
 
 ## Supported Platform
 Currently, ParrelSync supports Windows and macOS editors.  
