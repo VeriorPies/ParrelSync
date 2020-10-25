@@ -10,7 +10,8 @@ namespace ParrelSync.Update
     /// </summary>
     public class UpdateChecker
     {
-        const string LocalVersionFilePath = "Assets/ParrelSync/VERSION.txt";
+        //const string LocalVersionFilePath = "Assets/ParrelSync/VERSION.txt";
+        public const string LocalVersion = "1.4.1";
         [MenuItem("ParrelSync/Check for update", priority = 20)]
         static void CheckForUpdate()
         {
@@ -18,8 +19,11 @@ namespace ParrelSync.Update
             {
                 try
                 {
-                    string localVersionText = AssetDatabase.LoadAssetAtPath<TextAsset>(LocalVersionFilePath).text;
-                    Debug.Log("Local version text : " + localVersionText);
+                    //This won't work with UPM packages
+                    //string localVersionText = AssetDatabase.LoadAssetAtPath<TextAsset>(LocalVersionFilePath).text;
+
+                    string localVersionText = LocalVersion;
+                    Debug.Log("Local version text : " + LocalVersion);
 
                     string latesteVersionText = client.DownloadString(ExternalLinks.RemoteVersionURL);
                     Debug.Log("latest version text got: " + latesteVersionText);
