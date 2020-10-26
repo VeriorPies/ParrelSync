@@ -21,20 +21,21 @@ ParrelSync is a Unity editor extension that allows users to test multiplayer gam
 
 1. Backup your project folder or use a version control system such as [Git](https://git-scm.com/) or [SVN](https://subversion.apache.org/)
 2. Download .unitypackage from the [latest release](https://github.com/VeriorPies/ParrelSync/releases) and import it to your project. 
-3.  Parrel Sync should appreared in the menu item bar after imported
+3.  ParrelSync should appreared in the menu item bar after imported
 ![UpdateButtonInMenu](https://github.com/VeriorPies/ParrelSync/raw/master/Images/AfterImported.png)  
 
 Check out the [Installation-and-Update](https://github.com/VeriorPies/ParrelSync/wiki/Installation-and-Update) page for more details.
 
 ### UPM Package
-ParrelSync can also be installed via UPM package. After Unity 2019.3.4f1, Unity 2020.1a21, that support path query parameter of git package. You can install ParrelSync by adding `https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync` to Package Manager as follow.
+ParrelSync can also be installed via UPM package.  
+After Unity 2019.3.4f1, Unity 2020.1a21, which support path query parameter of git package. You can install ParrelSync by adding the following to Package Manager.
+
+`https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync`  
 <br>
-![UPM_Image](/Images/UPM_1.png?raw=true)
-![UPM_Image2](/Images/UPM_2.png?raw=true)
+![UPM_Image](https://github.com/VeriorPies/ParrelSync/raw/master/Images/UPM_1.png?raw=true) ![UPM_Image2](https://github.com/VeriorPies/ParrelSync/raw/master/Images/UPM_2.png?raw=true)
 <br>
-or add `"com.veriorpies.parrelsync": "https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync"` to `Packages/manifest.json`.
-<br>
-If you want to set a target version, ParrelSync is using `*.*.*` release tag so you can specify a version like `#1.4.1`. For example:  `https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync#2.0.36`.
+or by adding `"com.veriorpies.parrelsync": "https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync"` to `Packages/manifest.json`  
+
 
 ## Supported Platform
 Currently, ParrelSync supports Windows and macOS editors.  
