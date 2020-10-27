@@ -34,7 +34,11 @@ After Unity 2019.3.4f1, Unity 2020.1a21, which support path query parameter of g
 <br>
 ![UPM_Image](https://github.com/VeriorPies/ParrelSync/raw/master/Images/UPM_1.png?raw=true) ![UPM_Image2](https://github.com/VeriorPies/ParrelSync/raw/master/Images/UPM_2.png?raw=true)
 <br>
-or by adding `"com.veriorpies.parrelsync": "https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync"` to `Packages/manifest.json`  
+or by adding 
+
+`"com.veriorpies.parrelsync": "https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync"` 
+
+to the `Packages/manifest.json` file 
 
 
 ## Supported Platform
