@@ -108,7 +108,7 @@ namespace ParrelSync
             ClonesManager.LinkFolders(sourceProject.packagesPath, cloneProject.packagesPath);
             ClonesManager.LinkFolders(sourceProject.autoBuildPath, cloneProject.autoBuildPath);
             ClonesManager.LinkFolders(sourceProject.localPackages, cloneProject.localPackages);
-            
+
             ClonesManager.RegisterClone(cloneProject);
 
             return cloneProject;
@@ -165,6 +165,8 @@ namespace ParrelSync
                     return EditorApplication.applicationPath;
                 case RuntimePlatform.OSXEditor:
                     return EditorApplication.applicationPath + "/Contents/MacOS/Unity";
+                case RuntimePlatform.LinuxEditor:
+                    return EditorApplication.applicationPath;
                 default:
                     throw new System.NotImplementedException("Platform has not supported yet ;(");
             }
@@ -190,12 +192,12 @@ namespace ParrelSync
                     if (Preferences.AlsoCheckUnityLockFileStaPref.Value)
                         return File.Exists(UnityLockFilePath) && FileUtilities.IsFileLocked(UnityLockFilePath);
                     else
-                         return File.Exists(UnityLockFilePath);
+                        return File.Exists(UnityLockFilePath);
                 case (RuntimePlatform.OSXEditor):
                     //Mac editor won't lock "UnityLockfile" file when project is being opened
                     return File.Exists(UnityLockFilePath);
                 case (RuntimePlatform.LinuxEditor):
-                    throw new System.NotImplementedException("IsCloneProjectRunning: No linux implementation yet.");
+                    return File.Exists(UnityLockFilePath);
                 default:
                     throw new System.NotImplementedException("IsCloneProjectRunning: Unsupport Platfrom: " + Application.platform);
             }
@@ -244,8 +246,13 @@ namespace ParrelSync
 
                     break;
                 case (RuntimePlatform.LinuxEditor):
-                    throw new System.NotImplementedException("No linux support yet :(");
-                //break;
+                    Debug.Log("Attempting to delete folder \"" + cloneProjectPath + "\"");
+                    identifierFile = Path.Combine(cloneProjectPath, ClonesManager.ArgumentFileName);
+                    File.Delete(identifierFile);
+
+                    FileUtil.DeleteFileOrDirectory(cloneProjectPath);
+
+                    break;
                 default:
                     Debug.LogWarning("Not in a known editor. Where are you!?");
                     break;
@@ -306,6 +313,22 @@ namespace ParrelSync
         }
 
         /// <summary>
+        /// Creates a symlink between destinationPath and sourcePath (Linux version).
+        /// </summary>
+        /// <param name="sourcePath"></param>
+        /// <param name="destinationPath"></param>
+        private static void CreateLinkLinux(string sourcePath, string destinationPath)
+        {
+            sourcePath = sourcePath.Replace(" ", "\\ ");
+            destinationPath = destinationPath.Replace(" ", "\\ ");
+            var command = $"ln -s {sourcePath} {destinationPath}";
+
+            Debug.Log("Linux Symlink " + command);
+
+            ClonesManager.ExecuteBashCommand(command);
+        }
+
+        /// <summary>
         /// Creates a symlink between destinationPath and sourcePath (Windows version).
         /// </summary>
         /// <param name="sourcePath"></param>
@@ -343,8 +366,8 @@ namespace ParrelSync
                         CreateLinkMac(sourcePath, destinationPath);
                         break;
                     case (RuntimePlatform.LinuxEditor):
-                        throw new System.NotImplementedException("LinkFolders: No linux support yet.");
-                    //break;
+                        CreateLinkLinux(sourcePath, destinationPath);
+                        break;
                     default:
                         Debug.LogWarning("Not in a known editor. Application.platform: " + Application.platform);
                         break;
@@ -375,7 +398,7 @@ namespace ParrelSync
                 isCloneFileExistCache = File.Exists(cloneFilePath);
             }
 
-            return (bool) isCloneFileExistCache;
+            return (bool)isCloneFileExistCache;
         }
 
         /// <summary>
@@ -534,7 +557,7 @@ namespace ParrelSync
                 copiedBytes += file.Length;
 
                 /// Display the progress bar.
-                float progress = (float) copiedBytes / (float) totalBytes;
+                float progress = (float)copiedBytes / (float)totalBytes;
                 bool cancelCopy = EditorUtility.DisplayCancelableProgressBar(
                     progressBarPrefix + "Copying '" + source.FullName + "' to '" + destination.FullName + "'...",
                     "(" + (progress * 100f).ToString("F2") + "%) Copying file '" + file.Name + "'...",
@@ -623,10 +646,10 @@ namespace ParrelSync
                 }
             }
         }
-        
+
         public static void OpenProjectInFileExplorer(string path)
-        {           
-            System.Diagnostics.Process.Start(@path);            
+        {
+            System.Diagnostics.Process.Start(@path);
         }
         #endregion
     }

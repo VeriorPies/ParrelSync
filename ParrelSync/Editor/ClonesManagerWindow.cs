@@ -34,19 +34,6 @@ namespace ParrelSync
 
         private void OnGUI()
         {
-            if (Application.platform == RuntimePlatform.LinuxEditor)
-            {
-                EditorGUILayout.HelpBox(
-                       "Sorry, but " + ClonesManager.ProjectName + " doesn't support Linux currently.\n" +
-                       "Please create a feature request on GitHub issue page if you want it to be added.",
-                       MessageType.Info);
-                if (GUILayout.Button("Open GitHub issue Page"))
-                {
-                    Application.OpenURL(ExternalLinks.GitHubIssue);
-                }
-                return;
-            }
-
             /// If it is a clone project...
             if (ClonesManager.IsClone())
             {
