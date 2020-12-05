@@ -47,8 +47,8 @@ to the `Packages/manifest.json` file
 
 
 ## Supported Platform
-Currently, ParrelSync supports Windows, macOS and Linux editors.  
-Please create a [feature request](https://github.com/VeriorPies/ParrelSync/issues/new/choose) if you want support to be added. 
+Currently, ParrelSync supports Windows and macOS editors.  
+For linux support, please download the [latest 1.4.2 beta release](https://github.com/VeriorPies/ParrelSync/releases/tag/1.4.2).  
 
 ParrelSync has been tested with the following Unity version. However, it should also work with other versions as well.
 * *2020.1.2f1*
