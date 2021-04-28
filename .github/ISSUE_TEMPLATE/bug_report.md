@@ -24,8 +24,8 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots or video link( Youtube/Vimeo) to help explain the problem.
 
 **Enviroment (please complete the following information):**
- - Unity Editor Version: [e.g. Windows 2019.3.0f6]
- - ParrelSync Version [e.g. 1.2]
+ - Unity Editor Version: (For Example: Windows 2019.3.0f6)
+ - ParrelSync Version: (For Example: 1.4.3)
 
 **Additional context**
 Add any other context about the problem here.
