@@ -101,7 +101,7 @@ namespace ParrelSync
             name = pathArray.Last();
 
             pathArray.RemoveAt(pathArray.Count() - 1);
-            rootPath = string.Join(separator[0].ToString(), pathArray);
+            rootPath = string.Join(separator[0].ToString(), pathArray.ToArray());
 
             assetPath = projectPath + "/Assets";
             projectSettingsPath = projectPath + "/ProjectSettings";

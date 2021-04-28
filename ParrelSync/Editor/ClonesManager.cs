@@ -181,7 +181,8 @@ namespace ParrelSync
         {
 
             //Determine whether it is opened in another instance by checking the UnityLockFile
-            string UnityLockFilePath = Path.Combine(projectPath, "Temp", "UnityLockfile");
+            string UnityLockFilePath = new string[] { projectPath, "Temp", "UnityLockfile" }
+                .Aggregate(Path.Combine);
 
             switch (Application.platform)
             {
@@ -305,7 +306,7 @@ namespace ParrelSync
         {
             sourcePath = sourcePath.Replace(" ", "\\ ");
             destinationPath = destinationPath.Replace(" ", "\\ ");
-            var command = $"ln -s {sourcePath} {destinationPath}";
+            var command = string.Format("ln -s {0} {1}", sourcePath, destinationPath);
 
             Debug.Log("Mac hard link " + command);
 
@@ -588,13 +589,13 @@ namespace ParrelSync
                 "Scanning '" + directory.FullName + "'...", 0f);
 
             /// Calculate size of all files in directory.
-            long filesSize = directory.EnumerateFiles().Sum((FileInfo file) => file.Length);
+            long filesSize = directory.GetFiles().Sum((FileInfo file) => file.Length);
 
             /// Calculate size of all nested directories.
             long directoriesSize = 0;
             if (includeNested)
             {
-                IEnumerable<DirectoryInfo> nestedDirectories = directory.EnumerateDirectories();
+                IEnumerable<DirectoryInfo> nestedDirectories = directory.GetDirectories();
                 foreach (DirectoryInfo nestedDir in nestedDirectories)
                 {
                     directoriesSize += ClonesManager.GetDirectorySize(nestedDir, true, progressBarPrefix);
