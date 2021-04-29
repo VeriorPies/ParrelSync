@@ -329,7 +329,7 @@ namespace ParrelSync
         {
             sourcePath = sourcePath.Replace(" ", "\\ ");
             destinationPath = destinationPath.Replace(" ", "\\ ");
-            var command = $"ln -s {sourcePath} {destinationPath}";
+            var command = string.Format("ln -s {0} {1}", sourcePath, destinationPath);           
 
             Debug.Log("Linux Symlink " + command);
 
