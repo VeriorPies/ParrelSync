@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-namespace ParrelSync
+﻿namespace ParrelSync
 {
     public class ExternalLinks 
     {
