@@ -157,6 +157,8 @@ namespace ParrelSync
                 return;
             }
 
+            ParrelSync.NonCore.ValidateCopiedFoldersIntegrity.ValidateFolder(projectPath, ClonesManager.GetOriginalProjectPath(), "Packages");
+
             string fileName = GetApplicationPath();
             string args = "-projectPath \"" + projectPath + "\"";
             Debug.Log("Opening project \"" + fileName + " " + args + "\"");
