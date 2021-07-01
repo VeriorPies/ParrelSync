@@ -26,6 +26,7 @@ If applicable, add screenshots or video link( Youtube/Vimeo) to help explain the
 **Enviroment (please complete the following information):**
  - Unity Editor Version: (For Example: Windows 2019.3.0f6)
  - ParrelSync Version: (For Example: 1.4.3)
+ - OS Version: (For Example:Windows 10 21H1, macOS Big Sur, Ubuntu 20.04 LTS)
 
 **Additional context**
 Add any other context about the problem here.
