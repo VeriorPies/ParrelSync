@@ -23,16 +23,16 @@ namespace ParrelSync.NonCore
                 SessionState.SetBool(SessionStateKey, true);
                 if (!ClonesManager.IsClone()) { return; }
 
-                ValidateFolder("Packages");
+                ValidateFolder(ClonesManager.GetCurrentProjectPath(), ClonesManager.GetOriginalProjectPath(), "Packages");
             }
         }
 
-        static void ValidateFolder(string folderName)
+        public static void ValidateFolder(string current, string original, string folderName)
         {
-            var currentProjectPath = Path.Combine(ClonesManager.GetCurrentProjectPath(), folderName);
+            var currentProjectPath = Path.Combine(current, folderName);
             var currentFolderHash = CreateMd5ForFolder(currentProjectPath);
 
-            var originalProjectPath = Path.Combine(ClonesManager.GetOriginalProjectPath(), folderName);
+            var originalProjectPath = Path.Combine(original, folderName);
             var originalFolderHash = CreateMd5ForFolder(originalProjectPath);
 
             if (currentFolderHash != originalFolderHash)
