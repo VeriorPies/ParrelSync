@@ -1,4 +1,4 @@
-namespace ParrelSync.NonCore
+namespace ParrelSync
 {
     using UnityEditor;
     using UnityEngine;
@@ -27,18 +27,18 @@ namespace ParrelSync.NonCore
             }
         }
 
-        public static void ValidateFolder(string current, string original, string folderName)
+        public static void ValidateFolder(string targetRoot, string originalRoot, string folderName)
         {
-            var currentProjectPath = Path.Combine(current, folderName);
-            var currentFolderHash = CreateMd5ForFolder(currentProjectPath);
+            var targetFolderPath = Path.Combine(targetRoot, folderName);
+            var targetFolderHash = CreateMd5ForFolder(targetFolderPath);
 
-            var originalProjectPath = Path.Combine(original, folderName);
-            var originalFolderHash = CreateMd5ForFolder(originalProjectPath);
+            var originalFolderPath = Path.Combine(originalRoot, folderName);
+            var originalFolderHash = CreateMd5ForFolder(originalFolderPath);
 
-            if (currentFolderHash != originalFolderHash)
+            if (targetFolderHash != originalFolderHash)
             {
-                Debug.Log("ParrelSync: Detected '" + folderName + "' folder changes in the original project. Updating...");
-                FileUtil.ReplaceDirectory(originalProjectPath, currentProjectPath);
+                Debug.Log("ParrelSync: Detected changes in '" + folderName + "' directory. Updating cloned project...");
+                FileUtil.ReplaceDirectory(originalFolderPath, targetFolderPath);
             }
         }
 
