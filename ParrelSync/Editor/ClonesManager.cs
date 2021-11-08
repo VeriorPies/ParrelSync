@@ -104,16 +104,13 @@ namespace ParrelSync
             Debug.Log("Library copy: " + cloneProject.libraryPath);
             ClonesManager.CopyDirectoryWithProgressBar(sourceProject.libraryPath, cloneProject.libraryPath,
                 "Cloning Project Library '" + sourceProject.name + "'. ");
-            Debug.Log("Packages copy: " + cloneProject.libraryPath);
-            ClonesManager.CopyDirectoryWithProgressBar(sourceProject.packagesPath, cloneProject.packagesPath,
-              "Cloning Project Packages '" + sourceProject.name + "'. ");
-
 
             //Link Folders
             ClonesManager.LinkFolders(sourceProject.assetPath, cloneProject.assetPath);
             ClonesManager.LinkFolders(sourceProject.projectSettingsPath, cloneProject.projectSettingsPath);
             ClonesManager.LinkFolders(sourceProject.autoBuildPath, cloneProject.autoBuildPath);
             ClonesManager.LinkFolders(sourceProject.localPackages, cloneProject.localPackages);
+            ClonesManager.LinkFolders(sourceProject.packagesPath, cloneProject.packagesPath);
 
             ClonesManager.RegisterClone(cloneProject);
 
