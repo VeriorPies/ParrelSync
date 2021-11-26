@@ -552,7 +552,7 @@ namespace ParrelSync
             foreach (FileInfo file in source.GetFiles())
             {
                 // Ensure file exists before continuing.
-                if (file.Exists)
+                if (!file.Exists)
                 {
                     continue;
                 }
