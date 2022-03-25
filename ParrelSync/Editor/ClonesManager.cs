@@ -594,6 +594,8 @@ namespace ParrelSync
         private static long GetDirectorySize(DirectoryInfo directory, bool includeNested = false,
             string progressBarPrefix = "")
         {
+            if (!directory.Exists) return 0;
+            
             EditorUtility.DisplayProgressBar(progressBarPrefix + "Calculating size of directories...",
                 "Scanning '" + directory.FullName + "'...", 0f);
 
