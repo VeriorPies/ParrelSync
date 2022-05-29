@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
 using UnityEditor;
 using System.Linq;
 using System.IO;
+using ParrelSync.Editor;
 using Debug = UnityEngine.Debug;
 
 namespace ParrelSync
@@ -52,7 +54,7 @@ namespace ParrelSync
         /// Creates clone from the project currently open in Unity Editor.
         /// </summary>
         /// <returns></returns>
-        public static Project CreateCloneFromCurrent()
+        public static Project CreateCloneFromCurrent(string targetProjectPath = null)
         {
             if (IsClone())
             {
@@ -61,7 +63,7 @@ namespace ParrelSync
             }
 
             string currentProjectPath = ClonesManager.GetCurrentProjectPath();
-            return ClonesManager.CreateCloneFromPath(currentProjectPath);
+            return ClonesManager.CreateCloneFromPath(currentProjectPath, targetProjectPath);
         }
 
         /// <summary>
@@ -69,22 +71,33 @@ namespace ParrelSync
         /// </summary>
         /// <param name="sourceProjectPath"></param>
         /// <returns></returns>
-        public static Project CreateCloneFromPath(string sourceProjectPath)
+        public static Project CreateCloneFromPath(string sourceProjectPath, string targetProjectPath = null)
         {
             Project sourceProject = new Project(sourceProjectPath);
 
             string cloneProjectPath = null;
-
-            //Find available clone suffix id
-            for (int i = 0; i < MaxCloneProjectCount; i++)
+            
+            // Try to use targetProjectPath, the targetProjectPath must be an empty directory.
+            if (Directory.Exists(targetProjectPath) 
+                && File.GetAttributes(targetProjectPath).HasFlag(FileAttributes.Directory)
+                && Directory.GetFiles(targetProjectPath).Length == 0)
             {
-                string originalProjectPath = ClonesManager.GetCurrentProject().projectPath;
-                string possibleCloneProjectPath = originalProjectPath + ClonesManager.CloneNameSuffix + "_" + i;
+                cloneProjectPath = targetProjectPath;
+            }
 
-                if (!Directory.Exists(possibleCloneProjectPath))
+            if (cloneProjectPath == null)
+            {
+                //Find available clone suffix id
+                for (int i = 0; i < MaxCloneProjectCount; i++)
                 {
-                    cloneProjectPath = possibleCloneProjectPath;
-                    break;
+                    string originalProjectPath = ClonesManager.GetCurrentProject().projectPath;
+                    string possibleCloneProjectPath = originalProjectPath + ClonesManager.CloneNameSuffix + "_" + i;
+
+                    if (!Directory.Exists(possibleCloneProjectPath))
+                    {
+                        cloneProjectPath = possibleCloneProjectPath;
+                        break;
+                    }
                 }
             }
 
@@ -120,6 +133,24 @@ namespace ParrelSync
             ClonesManager.LinkFolders(sourceProject.localPackages, cloneProject.localPackages);
 
             ClonesManager.RegisterClone(cloneProject);
+            
+            // Record clone project path.
+            ParrelSyncSettings settings = AssetDatabase.LoadAssetAtPath<ParrelSyncSettings>("Assets/Editor/ParrelSyncSettings.asset");
+            if (settings == null)
+            {
+                settings = ScriptableObject.CreateInstance<ParrelSyncSettings>();
+
+                MigrateOldCloneList(settings);
+
+                SetupSettingsDirectory();
+                
+                AssetDatabase.CreateAsset(settings, "Assets/Editor/ParrelSyncSettings.asset");
+                AssetDatabase.SaveAssets();
+            }
+            
+            settings.cloneProjectPath.Add(cloneProject.projectPath);
+            EditorUtility.SetDirty(settings);
+            AssetDatabase.SaveAssets();
 
             return cloneProject;
         }
@@ -268,6 +299,21 @@ namespace ParrelSync
                     Debug.LogWarning("Not in a known editor. Where are you!?");
                     break;
             }
+            
+            ParrelSyncSettings settings = AssetDatabase.LoadAssetAtPath<ParrelSyncSettings>("Assets/Editor/ParrelSyncSettings.asset");
+            if (settings == null)
+            {
+                Debug.LogError("ParrelSyncSettings not found, this delete operation should not be triggered.");
+                return;
+            }
+
+            if (!settings.cloneProjectPath.Contains(cloneProjectPath))
+            {
+                Debug.LogError("Removed path not found in settings.");
+                return;
+            }
+
+            settings.cloneProjectPath.Remove(cloneProjectPath);
         }
 
         #endregion
@@ -433,6 +479,28 @@ namespace ParrelSync
         }
 
         /// <summary>
+        /// Get a new default clone project name.
+        /// </summary>
+        /// <returns>a new default name.</returns>
+        /// <exception cref="IndexOutOfRangeException">When exceed max MaxCloneProjectCount</exception>
+        public static string GetDefaultCloneProjectName()
+        {
+            //Find available clone suffix id
+            for (int i = 0; i < MaxCloneProjectCount; i++)
+            {
+                string originalProjectPath = ClonesManager.GetCurrentProject().projectPath;
+                string possibleCloneProjectPath = originalProjectPath + ClonesManager.CloneNameSuffix + "_" + i;
+
+                if (!Directory.Exists(possibleCloneProjectPath))
+                {
+                    return possibleCloneProjectPath;
+                }
+            }
+
+            throw new IndexOutOfRangeException("Exceed max clone project count.");
+        }
+
+        /// <summary>
         /// Get the argument of this clone project.
         /// If this is the original project, will return an empty string.
         /// </summary>
@@ -488,17 +556,50 @@ namespace ParrelSync
         /// <returns></returns>
         public static List<string> GetCloneProjectsPath()
         {
-            List<string> projectsPath = new List<string>();
+            ParrelSyncSettings settings = AssetDatabase.LoadAssetAtPath<ParrelSyncSettings>("Assets/Editor/ParrelSyncSettings.asset");
+            if (settings == null)
+            {
+                settings = ScriptableObject.CreateInstance<ParrelSyncSettings>();
+                
+                MigrateOldCloneList(settings);
+
+                SetupSettingsDirectory();
+                
+                AssetDatabase.CreateAsset(settings, "Assets/Editor/ParrelSyncSettings.asset");
+                AssetDatabase.SaveAssets();
+            }
+
+            return settings.cloneProjectPath;
+        }
+
+        /// <summary>
+        /// Setup the directory to store settings file.
+        /// </summary>
+        private static void SetupSettingsDirectory()
+        {
+            if (!AssetDatabase.IsValidFolder("Assets/Editor"))
+            {
+                AssetDatabase.CreateFolder("Assets", "Editor");
+            }
+        }
+
+        /// <summary>
+        /// Migrate the old clone project path to new project path list in the settings.
+        /// </summary>
+        /// <param name="settings">the settings instance of the project.</param>
+        private static void MigrateOldCloneList(ParrelSyncSettings settings)
+        {
+            //Find available clone suffix id
             for (int i = 0; i < MaxCloneProjectCount; i++)
             {
                 string originalProjectPath = ClonesManager.GetCurrentProject().projectPath;
-                string cloneProjectPath = originalProjectPath + ClonesManager.CloneNameSuffix + "_" + i;
+                string possibleCloneProjectPath = originalProjectPath + ClonesManager.CloneNameSuffix + "_" + i;
 
-                if (Directory.Exists(cloneProjectPath))
-                    projectsPath.Add(cloneProjectPath);
+                if (Directory.Exists(possibleCloneProjectPath))
+                {
+                    settings.cloneProjectPath.Add(possibleCloneProjectPath);
+                }
             }
-
-            return projectsPath;
         }
 
         /// <summary>

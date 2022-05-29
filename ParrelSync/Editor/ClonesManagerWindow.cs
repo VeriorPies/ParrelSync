@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEditor;
 using System.IO;
+using System.Linq;
 
 namespace ParrelSync
 {
@@ -177,7 +179,7 @@ namespace ParrelSync
 
                     if (GUILayout.Button("Add new clone"))
                     {
-                        ClonesManager.CreateCloneFromCurrent();
+                        CloneProject();
                     }
 
                     GUILayout.EndVertical();
@@ -189,10 +191,56 @@ namespace ParrelSync
                     EditorGUILayout.HelpBox("No project clones found. Create a new one!", MessageType.Info);
                     if (GUILayout.Button("Create new clone"))
                     {
-                        ClonesManager.CreateCloneFromCurrent();
+                        CloneProject();
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Wrapper method to create a new clone.
+        /// </summary>
+        private void CloneProject()
+        {
+            string parentPath = Directory.GetParent(ClonesManager.GetCurrentProjectPath())?.FullName;
+            string defaultClonePath = ClonesManager.GetDefaultCloneProjectName();
+            string projectName = defaultClonePath.Split('/').Last();
+
+            string selectedPath = null;
+            if (EditorUtility.DisplayDialog("Using Default Clone Path?",
+                    $"Do you want to create a clone at {defaultClonePath}?",
+                    "Yes",
+                    "No, I want select my own path"))
+            {
+                ClonesManager.CreateCloneFromCurrent(defaultClonePath);
+                return;
+            }
+
+            selectedPath = EditorUtility.SaveFolderPanel("Clone Project Location", parentPath, projectName);
+            if (string.IsNullOrEmpty(selectedPath))
+            {
+                Debug.Log("Clone canceled.");
+                return;
+            }
+
+            if (!IsEmptyDirectory(selectedPath))
+            {
+                Debug.Log("Not an empty directory.");
+                EditorUtility.DisplayDialog("Invalid Directory", "Selected directory is not empty.", "OK");
+                return;
+            }
+
+            ClonesManager.CreateCloneFromCurrent(selectedPath);
+        }
+
+        private bool IsEmptyDirectory(string path)
+        {
+            if (!Directory.Exists(path))
+            {
+                throw new ArgumentException("Directory not found.");
+            }
+
+            return (Directory.GetFiles(path).Length == 0 && Directory.GetDirectories(path).Length == 0);
         }
     }
 }
