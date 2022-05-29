@@ -66,6 +66,11 @@ namespace ParrelSync
         /// </summary>
         public static BoolPreference AlsoCheckUnityLockFileStaPref = new BoolPreference("ParrelSync_CheckUnityLockFileOpenStatus", true);
 
+        /// <summary>
+        /// If create a symbolic link instead of copy content for project Package directory.
+        /// </summary>
+        public static BoolPreference SymbolicLinkPackage = new BoolPreference("ParrelSync_SymbolicLinkPackage", false);
+
         private void OnGUI()
         {
             if (ClonesManager.IsClone())
@@ -97,11 +102,20 @@ namespace ParrelSync
                     ),
                     AlsoCheckUnityLockFileStaPref.Value);
             }
+            
+            SymbolicLinkPackage.Value = EditorGUILayout.ToggleLeft(
+                new GUIContent(
+                    "Use symbolic link instead of copy content for project Package directory.",
+                    "When enabled, a symbolic link will be created for Package directory. It is recommended if you are modifying contents inside Package directory."
+                ),
+                SymbolicLinkPackage.Value);
+            
             GUILayout.EndVertical();
             if (GUILayout.Button("Reset to default"))
             {
                 AssetModPref.ClearValue();
                 AlsoCheckUnityLockFileStaPref.ClearValue();
+                SymbolicLinkPackage.ClearValue();
                 Debug.Log("Editor preferences cleared");
             }
             GUILayout.EndVertical();
