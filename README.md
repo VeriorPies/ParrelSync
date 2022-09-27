@@ -81,7 +81,9 @@ To add a reference to the ParrelSync assembly:
 2. In the inspector, find the *Assembly Definition Reference* section and click the `+` button.
 3. Click the target icon to select an AssemblyDefinitionAsset (this is a reference to another `.asmdef`).
 4. Search for `projectCloner` and select the assembly in the list
+
    ![Adding a ParrelSync Assembly Definition Reference](https://user-images.githubusercontent.com/1055021/192572230-1ec156b3-9914-45b4-ae3e-b4e1154ab187.png)
+   
 5. Click the `Apply` button near the bottom of the inspector view.
 
 A project can have multiple assembly definitions.  You will need to repeat the steps above for every assembly you want to use the ParrelSync APIs from.
