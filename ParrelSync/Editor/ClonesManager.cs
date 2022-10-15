@@ -266,6 +266,19 @@ namespace ParrelSync
             }
         }
 
+        public static void SyncPackages(string cloneProjectPath)
+        {
+            if (string.IsNullOrEmpty(cloneProjectPath)) return;
+            
+            var sourceProjectPath = GetOriginalProjectPath();
+            if (cloneProjectPath == sourceProjectPath) return;
+
+            var sourceProject = new Project(sourceProjectPath);
+            var cloneProject = new Project(cloneProjectPath);
+
+            FileUtil.ReplaceDirectory(sourceProject.packagesPath, cloneProject.packagesPath);
+        }
+
         #endregion
 
         #region Creating project folders
