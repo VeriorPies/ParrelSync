@@ -270,11 +270,11 @@ namespace ParrelSync
         {
             if (string.IsNullOrEmpty(cloneProjectPath)) return;
             
-            var sourceProjectPath = GetOriginalProjectPath();
+            string sourceProjectPath = GetOriginalProjectPath();
             if (cloneProjectPath == sourceProjectPath) return;
 
-            var sourceProject = new Project(sourceProjectPath);
-            var cloneProject = new Project(cloneProjectPath);
+            Project sourceProject = new Project(sourceProjectPath);
+            Project cloneProject = new Project(cloneProjectPath);
 
             FileUtil.ReplaceDirectory(sourceProject.packagesPath, cloneProject.packagesPath);
         }
