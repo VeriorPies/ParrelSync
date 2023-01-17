@@ -552,6 +552,12 @@ namespace ParrelSync
             /// Copy all files from the source.
             foreach (FileInfo file in source.GetFiles())
             {
+                // Ensure file exists before continuing.
+                if (!file.Exists)
+                {
+                    continue;
+                }
+
                 try
                 {
                     file.CopyTo(Path.Combine(destination.ToString(), file.Name), true);
@@ -597,7 +603,7 @@ namespace ParrelSync
                 "Scanning '" + directory.FullName + "'...", 0f);
 
             /// Calculate size of all files in directory.
-            long filesSize = directory.GetFiles().Sum((FileInfo file) => file.Length);
+            long filesSize = directory.GetFiles().Sum((FileInfo file) => file.Exists ? file.Length : 0);
 
             /// Calculate size of all nested directories.
             long directoriesSize = 0;
