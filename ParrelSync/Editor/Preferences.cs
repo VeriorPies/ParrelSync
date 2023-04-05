@@ -44,7 +44,69 @@ namespace ParrelSync
             valueCache = null;
         }
     }
+    
+    
+    /// <summary>
+    /// To add value caching for <see cref="EditorPrefs"/> functions
+    /// </summary>
+    public class StringArrayPreference
+    {
+        public string key { get; private set; }
+        public string[] defaultValue { get; private set; }
+        public StringArrayPreference(string key, string[] defaultValue)
+        {
+            this.key = key;
+            this.defaultValue = defaultValue;
+        }
 
+        private string[]? valueCache = null;
+
+        public string[] Value
+        {
+            get
+            {
+                if (valueCache == null)
+                    valueCache = Deserialize(EditorPrefs.GetString(key));
+                
+                return valueCache;
+            }
+            set
+            {
+                if (valueCache == value)
+                    return;
+                
+				EditorPrefs.SetString(key, this.Serialize(value));
+                valueCache = value;
+                Debug.Log("Editor preference updated. key: " + key + ", value: " + this.Serialize(value));
+            }
+        }
+
+        public void ClearValue()
+        {
+            EditorPrefs.DeleteKey(key);
+            valueCache = null;
+        }
+
+        public string Serialize(string[] data)
+        {
+            string result = string.Empty;
+            foreach (var item in data)
+            {
+                if (data.Contains("|"))
+                {
+                    // throw error
+                }
+
+                result += item + "|||";
+            }
+
+            return result;
+        }
+        public string[] Deserialize(string data)
+        {
+            return data.Split("|||");
+        }
+    }
     public class Preferences : EditorWindow
     {
         [MenuItem("ParrelSync/Preferences", priority = 1)]
@@ -65,6 +127,12 @@ namespace ParrelSync
         /// also check is the is the UnityLockFile being opened.
         /// </summary>
         public static BoolPreference AlsoCheckUnityLockFileStaPref = new BoolPreference("ParrelSync_CheckUnityLockFileOpenStatus", true);
+
+        /// <summary>
+        /// In addition of checking the existence of UnityLockFile, 
+        /// also check is the is the UnityLockFile being opened.
+        /// </summary>
+        public static StringArrayPreference OptionalSymbolicLinkFolders = new StringArrayPreference("ParrelSync_OptionalSymbolicLinkFolders", new string[]{""});
 
         private void OnGUI()
         {
@@ -97,6 +165,16 @@ namespace ParrelSync
                     ),
                     AlsoCheckUnityLockFileStaPref.Value);
             }
+
+            OptionalSymbolicLinkFolders.Value = new string[]
+            {
+                EditorGUILayout.TextField(
+                    new GUIContent(
+                        "Folder 01",
+                        "tolltip"),
+                    OptionalSymbolicLinkFolders.Value[0])
+            };
+            
             GUILayout.EndVertical();
             if (GUILayout.Button("Reset to default"))
             {
