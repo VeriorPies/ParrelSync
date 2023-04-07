@@ -114,8 +114,9 @@ namespace ParrelSync
         public static BoolPreference AlsoCheckUnityLockFileStaPref = new BoolPreference("ParrelSync_CheckUnityLockFileOpenStatus", true);
 
         /// <summary>
-        /// In addition of checking the existence of UnityLockFile, 
-        /// also check is the is the UnityLockFile being opened.
+        /// A list of folders to create sybolic links for,
+        /// useful for data that lives outside of the assets folder
+        /// eg. Wwise project data
         /// </summary>
         public static ListOfStringsPreference OptionalSymbolicLinkFolders = new ListOfStringsPreference("ParrelSync_OptionalSymbolicLinkFolders");
         
