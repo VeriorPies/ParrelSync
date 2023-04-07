@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 using UnityEditor;
 
 namespace ParrelSync
@@ -49,62 +51,44 @@ namespace ParrelSync
     /// <summary>
     /// To add value caching for <see cref="EditorPrefs"/> functions
     /// </summary>
-    public class StringArrayPreference
+    public class ListOfStringsPreference
     {
-        public string key { get; private set; }
-        public string[] defaultValue { get; private set; }
-        public StringArrayPreference(string key, string[] defaultValue)
+        private static string serializationToken = "|||";
+        public string Key { get; private set; }
+        public ListOfStringsPreference(string key)
         {
-            this.key = key;
-            this.defaultValue = defaultValue;
+            Key = key;
         }
-
-        private string[]? valueCache = null;
-
-        public string[] Value
+        public List<string> GetStoredValue()
         {
-            get
-            {
-                if (valueCache == null)
-                    valueCache = Deserialize(EditorPrefs.GetString(key));
-                
-                return valueCache;
-            }
-            set
-            {
-                if (valueCache == value)
-                    return;
-                
-				EditorPrefs.SetString(key, this.Serialize(value));
-                valueCache = value;
-                Debug.Log("Editor preference updated. key: " + key + ", value: " + this.Serialize(value));
-            }
+            return this.Deserialize(EditorPrefs.GetString(Key));
         }
-
-        public void ClearValue()
+        public void SetStoredValue(List<string> strings)
         {
-            EditorPrefs.DeleteKey(key);
-            valueCache = null;
+            EditorPrefs.SetString(Key, this.Serialize(strings));
         }
-
-        public string Serialize(string[] data)
+        public void ClearStoredValue()
+        {
+            EditorPrefs.DeleteKey(Key);
+        }
+        public string Serialize(List<string> data)
         {
             string result = string.Empty;
             foreach (var item in data)
             {
-                if (item.Contains("|"))
+                if (item.Contains(serializationToken))
                 {
-                    // throw error
+                    Debug.LogError("Unable to serialize this value ["+item+"], it contains the serialization token ["+serializationToken+"]");
+                    continue;
                 }
 
-                result += item + "|||";
+                result += item + serializationToken;
             }
-
             return result;
         }
-        public string[] Deserialize(string data)
+        public List<string> Deserialize(string data)
         {
-            return data.Split("|||");
+            return data.Split(serializationToken).ToList();
         }
     }
     public class Preferences : EditorWindow
@@ -114,6 +98,7 @@ namespace ParrelSync
         {
             Preferences window = (Preferences)EditorWindow.GetWindow(typeof(Preferences));
             window.titleContent = new GUIContent(ClonesManager.ProjectName + " Preferences");
+            window.minSize = new Vector2(550, 300);
             window.Show();
         }
 
@@ -132,8 +117,8 @@ namespace ParrelSync
         /// In addition of checking the existence of UnityLockFile, 
         /// also check is the is the UnityLockFile being opened.
         /// </summary>
-        public static StringArrayPreference OptionalSymbolicLinkFolders = new StringArrayPreference("ParrelSync_OptionalSymbolicLinkFolders", new string[]{""});
-
+        public static ListOfStringsPreference OptionalSymbolicLinkFolders = new ListOfStringsPreference("ParrelSync_OptionalSymbolicLinkFolders");
+        
         private void OnGUI()
         {
             if (ClonesManager.IsClone())
@@ -165,21 +150,62 @@ namespace ParrelSync
                     ),
                     AlsoCheckUnityLockFileStaPref.Value);
             }
+            GUILayout.EndVertical();
 
-            OptionalSymbolicLinkFolders.Value = new string[]
+            GUILayout.BeginVertical("GroupBox");
+            GUILayout.Label("Optional Folders to Symbolically Link");
+            GUILayout.Space(5);
+
+            // cache the current value
+            List<string> optionalFolderPaths = OptionalSymbolicLinkFolders.GetStoredValue();
+            bool optionalFolderPathsAreDirty = false;
+            
+            // append a new row if full
+            if (optionalFolderPaths.Last() != "")
             {
-                EditorGUILayout.TextField(
-                    new GUIContent(
-                        "Folder 01",
-                        "tolltip"),
-                    OptionalSymbolicLinkFolders.Value[0])
-            };
+                optionalFolderPaths.Add("");
+            }
+
+            var projectPath = ClonesManager.GetCurrentProjectPath();
+            for (int i = 0; i < optionalFolderPaths.Count; ++i)
+            {
+                GUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField(optionalFolderPaths[i], EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                if (GUILayout.Button("Select Folder", GUILayout.Width(100)))
+                {
+                    var result = EditorUtility.OpenFolderPanel("Select Folder to Symbolically Link...", "", "");
+                    if (result.Contains(projectPath))
+                    {
+                        optionalFolderPaths[i] = result.Replace(projectPath,"");
+                        optionalFolderPathsAreDirty = true;
+                    }
+                    else if( result != "")
+                    {
+                        Debug.LogWarning("Symbolic Link folder must be within the project directory");
+                    }
+                }
+                if (GUILayout.Button("Clear", GUILayout.Width(100)))
+                {
+                    optionalFolderPaths[i] = "";
+                    optionalFolderPathsAreDirty = true;
+                }
+                GUILayout.EndHorizontal();
+            }
+
+            // only set the preference if the value is marked dirty
+            if (optionalFolderPathsAreDirty)
+            {
+                optionalFolderPaths.RemoveAll(str=> str == "");
+                OptionalSymbolicLinkFolders.SetStoredValue(optionalFolderPaths);
+            }
             
             GUILayout.EndVertical();
+            
             if (GUILayout.Button("Reset to default"))
             {
                 AssetModPref.ClearValue();
                 AlsoCheckUnityLockFileStaPref.ClearValue();
+                OptionalSymbolicLinkFolders.ClearStoredValue();
                 Debug.Log("Editor preferences cleared");
             }
             GUILayout.EndVertical();
