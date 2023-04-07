@@ -92,7 +92,7 @@ namespace ParrelSync
             string result = string.Empty;
             foreach (var item in data)
             {
-                if (data.Contains("|"))
+                if (item.Contains("|"))
                 {
                     // throw error
                 }
