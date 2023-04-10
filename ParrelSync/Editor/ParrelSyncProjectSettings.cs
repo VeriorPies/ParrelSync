@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
-using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -11,7 +10,10 @@ namespace ParrelSync
     public class ParrelSyncProjectSettings : ScriptableObject
     {
         public const string ParrelSyncSettingsPath = "Assets/Editor/ParrelSyncProjectSettings.asset";
-        [SerializeField] private List<string> m_OptionalSymbolicLinkFolders;
+        
+        [SerializeField]
+        [HideInInspector]
+        private List<string> m_OptionalSymbolicLinkFolders;
 
         private static ParrelSyncProjectSettings GetOrCreateSettings()
         {
@@ -51,11 +53,6 @@ namespace ParrelSync
         private ParrelSyncSettingsProvider(string path, SettingsScope scope = SettingsScope.User)
             : base(path, scope)
         {
-        }
-
-        private static bool IsSettingsAvailable()
-        {
-            return File.Exists(ParrelSyncProjectSettings.ParrelSyncSettingsPath);
         }
 
         public override void OnActivate(string searchContext, VisualElement rootElement)
@@ -125,12 +122,10 @@ namespace ParrelSync
         [SettingsProvider]
         public static SettingsProvider CreateParrelSyncSettingsProvider()
         {
-            if (!IsSettingsAvailable()) return null;
-            var provider = new ParrelSyncSettingsProvider("Project/ParrelSync", SettingsScope.Project)
+            return new ParrelSyncSettingsProvider("Project/ParrelSync", SettingsScope.Project)
             {
                 keywords = GetSearchKeywordsFromGUIContentProperties<Styles>()
             };
-            return provider;
         }
     }
 }
