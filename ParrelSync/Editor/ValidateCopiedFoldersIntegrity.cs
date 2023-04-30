@@ -1,4 +1,4 @@
-namespace ParrelSync.NonCore
+namespace ParrelSync
 {
     using UnityEditor;
     using UnityEngine;
@@ -23,22 +23,22 @@ namespace ParrelSync.NonCore
                 SessionState.SetBool(SessionStateKey, true);
                 if (!ClonesManager.IsClone()) { return; }
 
-                ValidateFolder("Packages");
+                ValidateFolder(ClonesManager.GetCurrentProjectPath(), ClonesManager.GetOriginalProjectPath(), "Packages");
             }
         }
 
-        static void ValidateFolder(string folderName)
+        public static void ValidateFolder(string targetRoot, string originalRoot, string folderName)
         {
-            var currentProjectPath = Path.Combine(ClonesManager.GetCurrentProjectPath(), folderName);
-            var currentFolderHash = CreateMd5ForFolder(currentProjectPath);
+            var targetFolderPath = Path.Combine(targetRoot, folderName);
+            var targetFolderHash = CreateMd5ForFolder(targetFolderPath);
 
-            var originalProjectPath = Path.Combine(ClonesManager.GetOriginalProjectPath(), folderName);
-            var originalFolderHash = CreateMd5ForFolder(originalProjectPath);
+            var originalFolderPath = Path.Combine(originalRoot, folderName);
+            var originalFolderHash = CreateMd5ForFolder(originalFolderPath);
 
-            if (currentFolderHash != originalFolderHash)
+            if (targetFolderHash != originalFolderHash)
             {
-                Debug.Log("ParrelSync: Detected '" + folderName + "' folder changes in the original project. Updating...");
-                FileUtil.ReplaceDirectory(originalProjectPath, currentProjectPath);
+                Debug.Log("ParrelSync: Detected changes in '" + folderName + "' directory. Updating cloned project...");
+                FileUtil.ReplaceDirectory(originalFolderPath, targetFolderPath);
             }
         }
 
