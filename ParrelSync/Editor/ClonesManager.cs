@@ -114,6 +114,24 @@ namespace ParrelSync
             ClonesManager.LinkFolders(sourceProject.projectSettingsPath, cloneProject.projectSettingsPath);
             ClonesManager.LinkFolders(sourceProject.autoBuildPath, cloneProject.autoBuildPath);
             ClonesManager.LinkFolders(sourceProject.localPackages, cloneProject.localPackages);
+            
+            //Optional Link Folders
+            var optionalLinkPaths = Preferences.OptionalSymbolicLinkFolders.GetStoredValue();
+            var projectSettings = ParrelSyncProjectSettings.GetSerializedSettings();
+            var projectSettingsProperty = projectSettings.FindProperty("m_OptionalSymbolicLinkFolders");
+            if (projectSettingsProperty is { isArray: true, arrayElementType: "string" })
+            {
+                for (var i = 0; i < projectSettingsProperty.arraySize; ++i)
+                {
+                    optionalLinkPaths.Add(projectSettingsProperty.GetArrayElementAtIndex(i).stringValue);
+                }
+            }
+            foreach (var path in optionalLinkPaths)
+            {
+                var sourceOptionalPath = sourceProjectPath + path;
+                var cloneOptionalPath = cloneProjectPath + path;
+                LinkFolders(sourceOptionalPath, cloneOptionalPath);
+            }
 
             ClonesManager.RegisterClone(cloneProject);
 

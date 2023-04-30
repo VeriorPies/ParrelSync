@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 using UnityEditor;
 
 namespace ParrelSync
@@ -44,7 +46,51 @@ namespace ParrelSync
             valueCache = null;
         }
     }
+    
+    
+    /// <summary>
+    /// To add value caching for <see cref="EditorPrefs"/> functions
+    /// </summary>
+    public class ListOfStringsPreference
+    {
+        private static string serializationToken = "|||";
+        public string Key { get; private set; }
+        public ListOfStringsPreference(string key)
+        {
+            Key = key;
+        }
+        public List<string> GetStoredValue()
+        {
+            return this.Deserialize(EditorPrefs.GetString(Key));
+        }
+        public void SetStoredValue(List<string> strings)
+        {
+            EditorPrefs.SetString(Key, this.Serialize(strings));
+        }
+        public void ClearStoredValue()
+        {
+            EditorPrefs.DeleteKey(Key);
+        }
+        public string Serialize(List<string> data)
+        {
+            string result = string.Empty;
+            foreach (var item in data)
+            {
+                if (item.Contains(serializationToken))
+                {
+                    Debug.LogError("Unable to serialize this value ["+item+"], it contains the serialization token ["+serializationToken+"]");
+                    continue;
+                }
 
+                result += item + serializationToken;
+            }
+            return result;
+        }
+        public List<string> Deserialize(string data)
+        {
+            return data.Split(serializationToken).ToList();
+        }
+    }
     public class Preferences : EditorWindow
     {
         [MenuItem("ParrelSync/Preferences", priority = 1)]
@@ -52,6 +98,7 @@ namespace ParrelSync
         {
             Preferences window = (Preferences)EditorWindow.GetWindow(typeof(Preferences));
             window.titleContent = new GUIContent(ClonesManager.ProjectName + " Preferences");
+            window.minSize = new Vector2(550, 300);
             window.Show();
         }
 
@@ -66,6 +113,13 @@ namespace ParrelSync
         /// </summary>
         public static BoolPreference AlsoCheckUnityLockFileStaPref = new BoolPreference("ParrelSync_CheckUnityLockFileOpenStatus", true);
 
+        /// <summary>
+        /// A list of folders to create sybolic links for,
+        /// useful for data that lives outside of the assets folder
+        /// eg. Wwise project data
+        /// </summary>
+        public static ListOfStringsPreference OptionalSymbolicLinkFolders = new ListOfStringsPreference("ParrelSync_OptionalSymbolicLinkFolders");
+        
         private void OnGUI()
         {
             if (ClonesManager.IsClone())
@@ -98,10 +152,61 @@ namespace ParrelSync
                     AlsoCheckUnityLockFileStaPref.Value);
             }
             GUILayout.EndVertical();
+
+            GUILayout.BeginVertical("GroupBox");
+            GUILayout.Label("Optional Folders to Symbolically Link");
+            GUILayout.Space(5);
+
+            // cache the current value
+            List<string> optionalFolderPaths = OptionalSymbolicLinkFolders.GetStoredValue();
+            bool optionalFolderPathsAreDirty = false;
+            
+            // append a new row if full
+            if (optionalFolderPaths.Last() != "")
+            {
+                optionalFolderPaths.Add("");
+            }
+
+            var projectPath = ClonesManager.GetCurrentProjectPath();
+            for (int i = 0; i < optionalFolderPaths.Count; ++i)
+            {
+                GUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField(optionalFolderPaths[i], EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                if (GUILayout.Button("Select Folder", GUILayout.Width(100)))
+                {
+                    var result = EditorUtility.OpenFolderPanel("Select Folder to Symbolically Link...", "", "");
+                    if (result.Contains(projectPath))
+                    {
+                        optionalFolderPaths[i] = result.Replace(projectPath,"");
+                        optionalFolderPathsAreDirty = true;
+                    }
+                    else if( result != "")
+                    {
+                        Debug.LogWarning("Symbolic Link folder must be within the project directory");
+                    }
+                }
+                if (GUILayout.Button("Clear", GUILayout.Width(100)))
+                {
+                    optionalFolderPaths[i] = "";
+                    optionalFolderPathsAreDirty = true;
+                }
+                GUILayout.EndHorizontal();
+            }
+
+            // only set the preference if the value is marked dirty
+            if (optionalFolderPathsAreDirty)
+            {
+                optionalFolderPaths.RemoveAll(str=> str == "");
+                OptionalSymbolicLinkFolders.SetStoredValue(optionalFolderPaths);
+            }
+            
+            GUILayout.EndVertical();
+            
             if (GUILayout.Button("Reset to default"))
             {
                 AssetModPref.ClearValue();
                 AlsoCheckUnityLockFileStaPref.ClearValue();
+                OptionalSymbolicLinkFolders.ClearStoredValue();
                 Debug.Log("Editor preferences cleared");
             }
             GUILayout.EndVertical();
