@@ -88,7 +88,7 @@ namespace ParrelSync
         }
         public List<string> Deserialize(string data)
         {
-            return data.Split(serializationToken).ToList();
+            return data.Split(serializationToken.ToCharArray()).ToList();
         }
     }
     public class Preferences : EditorWindow
