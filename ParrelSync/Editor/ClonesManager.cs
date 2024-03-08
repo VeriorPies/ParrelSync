@@ -76,6 +76,7 @@ namespace ParrelSync
             string cloneProjectPath = null;
 
             //Find available clone suffix id
+            int availableCloneSuffixId = 0;
             for (int i = 0; i < MaxCloneProjectCount; i++)
             {
                 string originalProjectPath = ClonesManager.GetCurrentProject().projectPath;
@@ -84,6 +85,7 @@ namespace ParrelSync
                 if (!Directory.Exists(possibleCloneProjectPath))
                 {
                     cloneProjectPath = possibleCloneProjectPath;
+                    availableCloneSuffixId = i;
                     break;
                 }
             }
@@ -133,7 +135,7 @@ namespace ParrelSync
                 LinkFolders(sourceOptionalPath, cloneOptionalPath);
             }
 
-            ClonesManager.RegisterClone(cloneProject);
+            ClonesManager.RegisterClone(cloneProject, availableCloneSuffixId);
 
             return cloneProject;
         }
@@ -142,7 +144,7 @@ namespace ParrelSync
         /// Registers a clone by placing an identifying ".clone" file in its root directory.
         /// </summary>
         /// <param name="cloneProject"></param>
-        private static void RegisterClone(Project cloneProject)
+        private static void RegisterClone(Project cloneProject, int availableCloneSuffixId)
         {
             /// Add clone identifier file.
             string identifierFile = Path.Combine(cloneProject.projectPath, ClonesManager.CloneFileName);
@@ -150,7 +152,7 @@ namespace ParrelSync
 
             //Add argument file with default argument
             string argumentFilePath = Path.Combine(cloneProject.projectPath, ClonesManager.ArgumentFileName);
-            File.WriteAllText(argumentFilePath, DefaultArgument, System.Text.Encoding.UTF8);
+            File.WriteAllText(argumentFilePath, DefaultArgument + availableCloneSuffixId, System.Text.Encoding.UTF8);
 
             /// Add collabignore.txt to stop the clone from messing with Unity Collaborate if it's enabled. Just in case.
             string collabignoreFile = Path.Combine(cloneProject.projectPath, "collabignore.txt");
