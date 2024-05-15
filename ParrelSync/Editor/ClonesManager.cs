@@ -152,7 +152,7 @@ namespace ParrelSync
 
             //Add argument file with default argument
             string argumentFilePath = Path.Combine(cloneProject.projectPath, ClonesManager.ArgumentFileName);
-            File.WriteAllText(argumentFilePath, DefaultArgument + availableCloneSuffixId, System.Text.Encoding.UTF8);
+            File.WriteAllText(argumentFilePath, DefaultArgument + "_" + availableCloneSuffixId, System.Text.Encoding.UTF8);
 
             /// Add collabignore.txt to stop the clone from messing with Unity Collaborate if it's enabled. Just in case.
             string collabignoreFile = Path.Combine(cloneProject.projectPath, "collabignore.txt");
