@@ -301,6 +301,7 @@ namespace ParrelSync
             Project cloneProject = new Project(cloneProjectPath);
 
             FileUtil.ReplaceDirectory(sourceProject.packagesPath, cloneProject.packagesPath);
+            Debug.Log("Package Folder Synced (" + sourceProject.packagesPath + " => " + cloneProject.packagesPath + ")");
         }
 
         #endregion
