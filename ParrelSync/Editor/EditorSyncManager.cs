@@ -38,13 +38,12 @@ namespace ParrelSync
         {
             if (!ClonesManager.IsClone() && !ignoreNextAssemblyReload)
             {
-                IpcServer.SendToAll(new AssemblyReloadMessage());
-
                 int clientCount = IpcServer.ClientCount;
 
-                // onlu wait until all assembly reload messages are sent if there are connected clones
+                // only wait until all assembly reload messages are sent if there are connected clones
                 if (clientCount > 0)
                 {
+                    IpcServer.SendToAll(new AssemblyReloadMessage());
                     AssemblyReloadWaitHandler.SetCountAndWait(clientCount);
                 }
 
@@ -100,7 +99,12 @@ namespace ParrelSync
             }
             else if (change == PlayModeStateChange.ExitingEditMode)
             {
-                ignoreNextAssemblyReload = true;
+                if (!EditorSettings.enterPlayModeOptionsEnabled ||
+                    !EditorSettings.enterPlayModeOptions.HasFlag(EnterPlayModeOptions.DisableDomainReload))
+                {
+                    ignoreNextAssemblyReload = true;
+                }
+
                 IpcServer.SendToAll(new PlayModeChangedMessage() { InPlayMode = true });
             }
         }
