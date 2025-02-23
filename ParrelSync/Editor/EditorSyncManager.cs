@@ -5,6 +5,8 @@ namespace ParrelSync
 {    
     internal static class EditorSyncManager
     {
+        private static bool ignoreNextAssemblyReload = false;
+
         [InitializeOnLoadMethod]
         private static void Init()
         {
@@ -34,7 +36,7 @@ namespace ParrelSync
 
         private static void OnBeforeAssemblyReload()
         {
-            if (!ClonesManager.IsClone())
+            if (!ClonesManager.IsClone() && !ignoreNextAssemblyReload)
             {
                 IpcServer.SendToAll(new AssemblyReloadMessage());
 
@@ -45,6 +47,8 @@ namespace ParrelSync
                 {
                     AssemblyReloadWaitHandler.SetCountAndWait(clientCount);
                 }
+
+                ignoreNextAssemblyReload = false;
             }
             
             Teardown();
@@ -69,6 +73,11 @@ namespace ParrelSync
 
         private static void OnClientConnectedToServer(IpcConnectionToClient client)
         {
+            if (!Preferences.SyncPlayModePref.Value)
+            {
+                return;
+            }
+
             // sync the play mode state when a clone connects
             PlayModeChangedMessage message = new PlayModeChangedMessage()
             {
@@ -79,14 +88,19 @@ namespace ParrelSync
 
         private static void OnPlayModeStateChangedInSource(PlayModeStateChange change)
         {
-            // send the play mode state on change to connected clones
+            if (!Preferences.SyncPlayModePref.Value)
+            {
+                return;
+            }
 
+            // send the play mode state on change to connected clones
             if (change == PlayModeStateChange.ExitingPlayMode)
             {
                 IpcServer.SendToAll(new PlayModeChangedMessage() { InPlayMode = false });
             }
             else if (change == PlayModeStateChange.ExitingEditMode)
             {
+                ignoreNextAssemblyReload = true;
                 IpcServer.SendToAll(new PlayModeChangedMessage() { InPlayMode = true });
             }
         }

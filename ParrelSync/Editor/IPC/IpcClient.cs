@@ -57,10 +57,9 @@ namespace ParrelSync.Ipc
 
         private static async Task ConnectLoopAsync(CancellationToken cancellationToken)
         {
-            _activeTcpClient = new TcpClient();
-
             while (!cancellationToken.IsCancellationRequested)
             {
+                _activeTcpClient = new TcpClient();
                 try
                 {
                     await _activeTcpClient.ConnectAsync(IPAddress.Loopback, IpcPortGetter.GetPort());
@@ -73,6 +72,7 @@ namespace ParrelSync.Ipc
                 }
                 catch (SocketException)
                 {
+                    _activeTcpClient.Dispose();
                 }
 
                 await Task.Delay(1000, cancellationToken);

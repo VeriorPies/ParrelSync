@@ -49,7 +49,8 @@ namespace ParrelSync.Ipc
         {
             _cancellationSource.Cancel();
             _cancellationSource = null;
-            activeListener.Stop();
+            activeListener?.Stop();
+            activeListener?.Server.Dispose();
 
             foreach (var kvp in _clients)
             {
