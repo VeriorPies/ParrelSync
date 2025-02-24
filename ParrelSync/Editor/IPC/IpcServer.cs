@@ -50,7 +50,6 @@ namespace ParrelSync.Ipc
             _cancellationSource.Cancel();
             _cancellationSource = null;
             activeListener?.Stop();
-            activeListener?.Server.Dispose();
 
             foreach (var kvp in _clients)
             {
@@ -63,6 +62,7 @@ namespace ParrelSync.Ipc
         private static async Task AcceptConnectionLoopAsync(CancellationToken cancellationToken)
         {
             activeListener = new TcpListener(IPAddress.Loopback, IpcPortGetter.GetPort());
+            activeListener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
             activeListener.Start();
             while (!cancellationToken.IsCancellationRequested)
             {
