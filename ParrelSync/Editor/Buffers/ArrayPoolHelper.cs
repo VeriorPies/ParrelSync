@@ -12,7 +12,7 @@ namespace ParrelSync.Buffers
 #if !UNITY_2021_2_OR_NEWER
             return s_byteArrayPool.Rent(minimumLength);
 #else
-        return ArrayPool<byte>.Shared.Rent(minimumLength);
+            return System.Buffers.ArrayPool<byte>.Shared.Rent(minimumLength);
 #endif
         }
 
@@ -21,7 +21,7 @@ namespace ParrelSync.Buffers
 #if !UNITY_2021_2_OR_NEWER
             s_byteArrayPool.Return(array);
 #else
-        ArrayPool<byte>.Shared.Return(array);
+            System.Buffers.ArrayPool<byte>.Shared.Return(array);
 #endif
         }
     }

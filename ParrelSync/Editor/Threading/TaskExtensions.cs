@@ -26,7 +26,7 @@ namespace ParrelSync.Threading.Tasks
             {
                 await task.ConfigureAwait(false);
             }
-            catch (Exception ex) when (ex is SocketException || ex is IOException)
+            catch (Exception ex) when (ex is SocketException || ex is IOException || ex is ObjectDisposedException)
             {
                 return true;
             }
