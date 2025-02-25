@@ -17,6 +17,9 @@ namespace ParrelSync.Ipc
 
             IpcMessages<HeartbeatMessage>.serializationMethod = SerializeHeartbeatMessage;
             IpcMessages<HeartbeatMessage>.deserializationMethod = DeserializeHeartbeatMessage;
+
+            IpcMessages<SourceProjectSavedMessage>.serializationMethod = SerializeSourceProjectSavedMessage;
+            IpcMessages<SourceProjectSavedMessage>.deserializationMethod = DeserializeSourceProjectSavedMessage;
         }
 
         private static AssemblyReloadMessage DeserializeAssemblyReloadMessage(QueuedIpcMessage message)
@@ -63,6 +66,19 @@ namespace ParrelSync.Ipc
             int position = 0;
             SerializationHelpers.TryReadBool(message.payload, message.messageSize, ref position, out bool inPlayMode);
             return new PlayModeChangedMessage() { InPlayMode = inPlayMode };
+        }
+
+        private static SourceProjectSavedMessage DeserializeSourceProjectSavedMessage(QueuedIpcMessage message)
+        {
+            return new SourceProjectSavedMessage() { };
+        }
+
+        private static QueuedIpcMessage SerializeSourceProjectSavedMessage(SourceProjectSavedMessage message)
+        {
+            int id = IpcMessageId<SourceProjectSavedMessage>.Id;
+            int messageSize = 0;
+
+            return new QueuedIpcMessage(id, messageSize, Array.Empty<byte>());
         }
     }
 }

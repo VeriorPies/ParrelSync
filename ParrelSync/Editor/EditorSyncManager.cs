@@ -1,8 +1,21 @@
 using ParrelSync.Ipc;
+using System;
 using UnityEditor;
+using UnityEditor.Callbacks;
 
 namespace ParrelSync
-{    
+{
+    internal class AssetSaveListener : AssetPostprocessor
+    {
+        static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths, bool didDomainReload)
+        {
+            if (!ClonesManager.IsClone())
+            {
+                EditorSyncManager.SendSourceProjectSavedMessage();
+            }
+        }
+    }
+
     internal static class EditorSyncManager
     {
         private static bool ignoreNextAssemblyReload = false;
@@ -23,10 +36,27 @@ namespace ParrelSync
             }
             else
             {
+                IpcClient.RegisterHandler<SourceProjectSavedMessage>(OnSourceProjectSavedFromSource);
                 IpcClient.RegisterHandler<PlayModeChangedMessage>(OnPlayModeChangedFromSource);
                 IpcClient.RegisterHandler<AssemblyReloadMessage>(OnAssemblyReloadFromSource);
+                IpcClient.Connected += OnClientConnect;
                 IpcClient.Start();
             }
+        }
+
+        private static void OnClientConnect()
+        {
+            AssetDatabase.Refresh();
+        }
+
+        internal static void SendSourceProjectSavedMessage()
+        {
+            IpcServer.SendToAll(new SourceProjectSavedMessage());
+        }
+
+        private static void OnSourceProjectSavedFromSource(SourceProjectSavedMessage saved)
+        {
+            AssetDatabase.Refresh();
         }
 
         private static void OnAssemblyReloadFromSource(AssemblyReloadMessage message)

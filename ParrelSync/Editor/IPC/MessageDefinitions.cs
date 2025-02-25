@@ -10,6 +10,10 @@ namespace ParrelSync.Ipc
     {
     }
 
+    public struct SourceProjectSavedMessage : IIpcMessage
+    {
+    }
+
     public struct HeartbeatMessage : IIpcMessage
     {
     }
