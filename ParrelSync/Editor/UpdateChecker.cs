@@ -9,7 +9,7 @@ namespace ParrelSync.Update
     public class UpdateChecker
     {
         //const string LocalVersionFilePath = "Assets/ParrelSync/VERSION.txt";
-        public const string LocalVersion = "1.5.2";
+        public const string LocalVersion = "1.5.3";
         [MenuItem("ParrelSync/Check for update", priority = 20)]
         static void CheckForUpdate()
         {
