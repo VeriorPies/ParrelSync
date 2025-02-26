@@ -3,14 +3,6 @@ namespace ParrelSync
 {
     internal static class StringExtensions
     {
-#if !UNITY_2021_2_OR_NEWER
-        internal static string[] Split(this string text, string separator)
-        {
-            string[] separatorArr = new string[] { separator };
-            return text.Split(separatorArr, System.StringSplitOptions.None);
-        }
-#endif
-
         internal static int GetStableHashCode(this string text)
         {
             unchecked
