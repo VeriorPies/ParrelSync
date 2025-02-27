@@ -1,7 +1,6 @@
 
 using ParrelSync;
 using UnityEditor;
-using UnityEngine;
 
 internal class RunInBackgroundChecker
 {
@@ -16,6 +15,13 @@ internal class RunInBackgroundChecker
             return;
         }
 
+        EditorApplication.update += OnEditorUpdate;
+    }
+
+    private static void OnEditorUpdate()
+    {
+        EditorApplication.update -= OnEditorUpdate;
+
         if (!PlayerSettings.runInBackground && !SessionState.GetBool(AlreadyShowedWarningKey, false))
         {
             var projectSettings = ParrelSyncProjectSettings.GetSerializedSettings().targetObject as ParrelSyncProjectSettings;
@@ -29,8 +35,8 @@ internal class RunInBackgroundChecker
             }
 
             int button = EditorUtility.DisplayDialogComplex(
-                                       ClonesManager.ProjectName + ": Run In Background Disabled.",
-                                       "Run In Background is disabled in player settings\n\n" +
+                                       ClonesManager.ProjectName + ": Run In Background Disabled",
+                                       "Run In Background is disabled in player settings.\n\n" +
                                        "Communication between source project and clone projects may " +
                                        "not behave correctly.\n\n" +
                                        "Do you want to enable it?",
@@ -44,6 +50,8 @@ internal class RunInBackgroundChecker
             {
                 case 0:
                     PlayerSettings.runInBackground = true;
+                    AssetDatabase.SaveAssets();
+                    AssetDatabase.Refresh();
                     break;
                 case 1:
                     EditorPrefs.SetBool(actualStopShowingKey, true);

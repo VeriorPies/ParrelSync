@@ -31,7 +31,12 @@ namespace ParrelSync
             {
                 m_ProjectId = Guid.NewGuid().ToString();
                 EditorUtility.SetDirty(this);
+#if UNITY_2021_1_OR_NEWER
                 AssetDatabase.SaveAssetIfDirty(this);
+#else
+                AssetDatabase.SaveAssets();
+#endif
+                AssetDatabase.Refresh();
             }
         }
 
