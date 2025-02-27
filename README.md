@@ -50,9 +50,9 @@ to the `Packages/manifest.json` file
 Currently, ParrelSync supports Windows, macOS and Linux editors.  
 
 ParrelSync has been tested with the following Unity version. However, it should also work with other versions as well.
+* *2022.3.56f1 LTS*
 * *2021.3.29f1 LTS*
 * *2020.3.1f1 LTS*
-* *2019.3.0f6 LTS*
 
 
 ## APIs

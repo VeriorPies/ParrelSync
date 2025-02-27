@@ -103,6 +103,11 @@ namespace ParrelSync
         }
 
         /// <summary>
+        /// Sync play mode state to clone editors?
+        /// </summary>
+        public static BoolPreference SyncPlayModePref = new BoolPreference("ParrelSync_SyncPlayMode", true);
+
+        /// <summary>
         /// Disable asset saving in clone editors?
         /// </summary>
         public static BoolPreference AssetModPref = new BoolPreference("ParrelSync_DisableClonesAssetSaving", true);
@@ -133,6 +138,13 @@ namespace ParrelSync
             GUILayout.BeginVertical("HelpBox");
             GUILayout.Label("Preferences");
             GUILayout.BeginVertical("GroupBox");
+
+            SyncPlayModePref.Value = EditorGUILayout.ToggleLeft(
+                new GUIContent(
+                    "Sync play mode state with clone editors",
+                    "Clone editors will enter and exit play mode automatically when orginal project enters and exits play mode."
+                ),
+                SyncPlayModePref.Value);
 
             AssetModPref.Value = EditorGUILayout.ToggleLeft(
                 new GUIContent(
@@ -204,6 +216,7 @@ namespace ParrelSync
             
             if (GUILayout.Button("Reset to default"))
             {
+                SyncPlayModePref.ClearValue();
                 AssetModPref.ClearValue();
                 AlsoCheckUnityLockFileStaPref.ClearValue();
                 OptionalSymbolicLinkFolders.ClearStoredValue();
