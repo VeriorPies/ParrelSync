@@ -93,7 +93,7 @@ namespace ParrelSync
     }
     public class Preferences : EditorWindow
     {
-        [MenuItem("ParrelSync/Preferences", priority = 1)]
+        [MenuItem("Tools/ParrelSync/Preferences", priority = 1)]
         private static void InitWindow()
         {
             Preferences window = (Preferences)EditorWindow.GetWindow(typeof(Preferences));

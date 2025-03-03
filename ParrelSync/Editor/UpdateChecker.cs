@@ -10,7 +10,7 @@ namespace ParrelSync.Update
     {
         //const string LocalVersionFilePath = "Assets/ParrelSync/VERSION.txt";
         public const string LocalVersion = "1.5.2";
-        [MenuItem("ParrelSync/Check for update", priority = 20)]
+        [MenuItem("Tools/ParrelSync/Check for update", priority = 20)]
         static void CheckForUpdate()
         {
             using (System.Net.WebClient client = new System.Net.WebClient())

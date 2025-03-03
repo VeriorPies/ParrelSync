@@ -27,7 +27,7 @@
             }
         }
 
-        //[MenuItem("ParrelSync/(Debug)Show AskFeedbackDialog ")]
+        //[MenuItem("Tools/ParrelSync/(Debug)Show AskFeedbackDialog ")]
         private static void ShowDialog()
         {
             int option = EditorUtility.DisplayDialogComplex("Do you like " + ParrelSync.ClonesManager.ProjectName + "?",
@@ -67,7 +67,7 @@
         ///// <summary>
         ///// For debug purpose
         ///// </summary>
-        //[MenuItem("ParrelSync/(Debug)Delete AskFeedbackDialog keys")]
+        //[MenuItem("Tools/ParrelSync/(Debug)Delete AskFeedbackDialog keys")]
         //private static void DebugDeleteAllKeys()
         //{
         //    EditorPrefs.DeleteKey(InitializeOnLoadCountKey);
