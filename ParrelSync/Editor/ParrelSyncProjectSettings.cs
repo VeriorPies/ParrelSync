@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -17,6 +18,27 @@ namespace ParrelSync
         [HideInInspector]
         private List<string> m_OptionalSymbolicLinkFolders;
         public const string NameOfOptionalSymbolicLinkFolders = nameof(m_OptionalSymbolicLinkFolders);
+
+        [SerializeField]
+        [HideInInspector]
+        private string m_ProjectId;
+
+        public string ProjectId => m_ProjectId;
+
+        private void OnEnable()
+        {
+            if (!ClonesManager.IsClone() && string.IsNullOrEmpty(m_ProjectId))
+            {
+                m_ProjectId = Guid.NewGuid().ToString();
+                EditorUtility.SetDirty(this);
+#if UNITY_2021_1_OR_NEWER
+                AssetDatabase.SaveAssetIfDirty(this);
+#else
+                AssetDatabase.SaveAssets();
+#endif
+                AssetDatabase.Refresh();
+            }
+        }
 
         private static ParrelSyncProjectSettings GetOrCreateSettings()
         {
