@@ -23,7 +23,7 @@ namespace ParrelSync
                 SessionState.SetBool(SessionStateKey, true);
                 if (!ClonesManager.IsClone()) { return; }
 
-                ValidateFolder(ClonesManager.GetCurrentProjectPath(), ClonesManager.GetOriginalProjectPath(), "Packages");
+                ValidatePackagesFiles(ClonesManager.GetCurrentProjectPath(), ClonesManager.GetOriginalProjectPath());
             }
         }
 
@@ -39,6 +39,34 @@ namespace ParrelSync
             {
                 Debug.Log("ParrelSync: Detected changes in '" + folderName + "' directory. Updating cloned project...");
                 FileUtil.ReplaceDirectory(originalFolderPath, targetFolderPath);
+            }
+        }
+
+        /// <summary>
+        /// Validates only the root-level files in the Packages directory (manifest.json, packages-lock.json, etc.).
+        /// Subdirectories are symlinked and don't need validation.
+        /// </summary>
+        public static void ValidatePackagesFiles(string targetRoot, string originalRoot)
+        {
+            var targetPackagesPath = Path.Combine(targetRoot, "Packages");
+            var originalPackagesPath = Path.Combine(originalRoot, "Packages");
+
+            if (!Directory.Exists(originalPackagesPath) || !Directory.Exists(targetPackagesPath))
+                return;
+
+            foreach (var originalFilePath in Directory.GetFiles(originalPackagesPath))
+            {
+                var fileName = Path.GetFileName(originalFilePath);
+                var targetFilePath = Path.Combine(targetPackagesPath, fileName);
+
+                bool needsCopy = !File.Exists(targetFilePath) ||
+                                 File.ReadAllText(originalFilePath) != File.ReadAllText(targetFilePath);
+
+                if (needsCopy)
+                {
+                    Debug.Log("ParrelSync: Detected changes in 'Packages/" + fileName + "'. Updating cloned project...");
+                    File.Copy(originalFilePath, targetFilePath, true);
+                }
             }
         }
 
