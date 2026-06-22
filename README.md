@@ -67,6 +67,27 @@ if (ClonesManager.IsClone()) {
 ```
 Check out [the doc](https://github.com/VeriorPies/ParrelSync/wiki/List-of-APIs) to view the complete API list.
 
+### Referencing APIs from a scripts assembly
+
+If you have an [Assembly Definition](https://docs.unity3d.com/Manual/cus-asmdef.html) in your project, you may need to manually reference the ParrelSync assembly.  If you don't reference the assembly, you may see errors when you try to use the ParrelSync API in your scripts.
+
+```
+error CS0246: The type or namespace name 'ParrelSync' could not be found (are you missing a using directive or an assembly reference?)
+```
+
+To add a reference to the ParrelSync assembly:
+
+1. Select the `.asmdef` file
+2. In the inspector, find the *Assembly Definition Reference* section and click the `+` button.
+3. Click the target icon to select an AssemblyDefinitionAsset (this is a reference to another `.asmdef`).
+4. Search for `projectCloner` and select the assembly in the list
+
+   ![Adding a ParrelSync Assembly Definition Reference](https://user-images.githubusercontent.com/1055021/192572230-1ec156b3-9914-45b4-ae3e-b4e1154ab187.png)
+   
+5. Click the `Apply` button near the bottom of the inspector view.
+
+A project can have multiple assembly definitions.  You will need to repeat the steps above for every assembly you want to use the ParrelSync APIs from.
+
 ## How does it work?
 For each clone instance, ParrelSync will make a copy of the original project folder and reference the ```Asset```, ```Packages``` and ```ProjectSettings``` folder back to the original project with [symbolic link](https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/mklink). Other folders such as ```Library```, ```Temp```, and ```obj``` will remain independent for each clone project.
 
