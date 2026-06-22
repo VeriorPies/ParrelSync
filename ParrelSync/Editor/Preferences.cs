@@ -185,10 +185,23 @@ namespace ParrelSync
                         Debug.LogWarning("Symbolic Link folder must be within the project directory");
                     }
                 }
-                if (GUILayout.Button("Clear", GUILayout.Width(100)))
+                if (GUILayout.Button("Clear", GUILayout.Width(50)))
                 {
                     optionalFolderPaths[i] = "";
                     optionalFolderPathsAreDirty = true;
+                }
+                if (GUILayout.Button("Clone", GUILayout.Width(50)) && !string.IsNullOrEmpty(optionalFolderPaths[i]))
+                {
+                    string currentProjectPath = ClonesManager.GetCurrentProjectPath();
+                    var cloneProjectsPath = ClonesManager.GetCloneProjectsPath();
+                    
+                    string path = optionalFolderPaths[i];
+                    var sourceOptionalPath = currentProjectPath + path;
+                    foreach (var cloneProjectPath in cloneProjectsPath)
+                    {
+                        var cloneOptionalPath = cloneProjectsPath[0] + path;
+                        ClonesManager.LinkFolders(sourceOptionalPath, cloneOptionalPath);
+                    }
                 }
                 GUILayout.EndHorizontal();
             }
