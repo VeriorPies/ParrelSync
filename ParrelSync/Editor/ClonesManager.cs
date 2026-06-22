@@ -335,7 +335,7 @@ namespace ParrelSync
         {
             sourcePath = sourcePath.Replace(" ", "\\ ");
             destinationPath = destinationPath.Replace(" ", "\\ ");
-            var command = string.Format("ln -s {0} {1}", sourcePath, destinationPath);
+            var command = string.Format("-c \"ln -s {0} {1}\"", sourcePath, destinationPath);
 
             Debug.Log("Mac hard link " + command);
 
