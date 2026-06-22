@@ -437,7 +437,7 @@ namespace ParrelSync
         /// <returns></returns>
         public static string GetCurrentProjectPath()
         {
-            return Application.dataPath.Replace("/Assets", "");
+            return System.IO.Path.GetDirectoryName(Application.dataPath);
         }
 
         /// <summary>
