@@ -100,13 +100,14 @@ namespace ParrelSync
 
             ClonesManager.CreateProjectFolder(cloneProject);
 
-            //Copy Folders           
+            //Copy Folders
             Debug.Log("Library copy: " + cloneProject.libraryPath);
             ClonesManager.CopyDirectoryWithProgressBar(sourceProject.libraryPath, cloneProject.libraryPath,
                 "Cloning Project Library '" + sourceProject.name + "'. ");
-            Debug.Log("Packages copy: " + cloneProject.libraryPath);
-            ClonesManager.CopyDirectoryWithProgressBar(sourceProject.packagesPath, cloneProject.packagesPath,
-              "Cloning Project Packages '" + sourceProject.name + "'. ");
+
+            //Packages: copy files, symlink subdirectories
+            Debug.Log("Packages clone: " + cloneProject.packagesPath);
+            ClonesManager.CopyDirectoryWithSymlinkedSubfolders(sourceProject.packagesPath, cloneProject.packagesPath);
 
 
             //Link Folders
@@ -323,6 +324,35 @@ namespace ParrelSync
         }
 
         #endregion
+
+        /// <summary>
+        /// Copies files in the root of the source directory and creates symlinks for subdirectories.
+        /// Used for the Packages folder so that embedded packages are symlinked while manifest files are copied.
+        /// </summary>
+        private static void CopyDirectoryWithSymlinkedSubfolders(string sourcePath, string destinationPath)
+        {
+            if (!Directory.Exists(sourcePath))
+            {
+                Debug.LogWarning("CopyDirectoryWithSymlinkedSubfolders: source path does not exist: " + sourcePath);
+                return;
+            }
+
+            Directory.CreateDirectory(destinationPath);
+
+            // Copy files in the root (manifest.json, packages-lock.json, etc.)
+            foreach (var filePath in Directory.GetFiles(sourcePath))
+            {
+                var fileName = Path.GetFileName(filePath);
+                File.Copy(filePath, Path.Combine(destinationPath, fileName));
+            }
+
+            // Symlink subdirectories (embedded packages)
+            foreach (var dirPath in Directory.GetDirectories(sourcePath))
+            {
+                var dirName = Path.GetFileName(dirPath);
+                LinkFolders(dirPath, Path.Combine(destinationPath, dirName));
+            }
+        }
 
         #region Creating symlinks
 
