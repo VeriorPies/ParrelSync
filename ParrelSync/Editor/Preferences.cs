@@ -122,6 +122,16 @@ namespace ParrelSync
         
         private void OnGUI()
         {
+            if (GUILayout.Button("Restore asset saving warning"))
+            {
+                EditorUtility.SetDialogOptOutDecision(DialogOptOutDecisionType.ForThisMachine,
+                    ParrelSyncAssetModificationProcessor.WarningOptOutKey, false);
+            }
+            EditorGUILayout.HelpBox(
+                "Dialog opt-out settings are shared by all editors on this machine. " +
+                "Hiding the warning does not allow asset saving and does not suppress the Console log.",
+                MessageType.Info);
+
             if (ClonesManager.IsClone())
             {
                 EditorGUILayout.HelpBox(
@@ -207,6 +217,8 @@ namespace ParrelSync
                 AssetModPref.ClearValue();
                 AlsoCheckUnityLockFileStaPref.ClearValue();
                 OptionalSymbolicLinkFolders.ClearStoredValue();
+                EditorUtility.SetDialogOptOutDecision(DialogOptOutDecisionType.ForThisMachine,
+                    ParrelSyncAssetModificationProcessor.WarningOptOutKey, false);
                 Debug.Log("Editor preferences cleared");
             }
             GUILayout.EndVertical();
