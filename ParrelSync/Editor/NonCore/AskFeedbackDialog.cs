@@ -30,12 +30,14 @@
         //[MenuItem("ParrelSync/(Debug)Show AskFeedbackDialog ")]
         private static void ShowDialog()
         {
-            int option = EditorUtility.DisplayDialogComplex("Do you like " + ParrelSync.ClonesManager.ProjectName + "?",
-                   "Do you like " + ParrelSync.ClonesManager.ProjectName + "?\n" +
-                   "If so, please don't hesitate to star it on GitHub and contribute to the project!",
-                   "Star on GitHub",
-                   "Close",
-                   "Remind me next time"
+            int option = EditorUtility.DisplayDialogComplex(
+                   ParrelSyncLocalization.Text("Do you like ParrelSync?", "喜欢 ParrelSync 吗？"),
+                   ParrelSyncLocalization.Text(
+                       "Do you like ParrelSync?\nIf so, please don't hesitate to star it on GitHub and contribute to the project!",
+                       "如果 ParrelSync 对你有帮助，欢迎在 GitHub 上为项目点 Star 或参与贡献。"),
+                   ParrelSyncLocalization.Text("Star on GitHub", "前往 GitHub 点 Star"),
+                   ParrelSyncLocalization.Text("Close", "关闭"),
+                   ParrelSyncLocalization.Text("Remind me next time", "下次提醒")
                );
 
             switch (option)

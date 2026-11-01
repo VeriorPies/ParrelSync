@@ -103,10 +103,10 @@ namespace ParrelSync
             //Copy Folders           
             Debug.Log("Library copy: " + cloneProject.libraryPath);
             ClonesManager.CopyDirectoryWithProgressBar(sourceProject.libraryPath, cloneProject.libraryPath,
-                "Cloning Project Library '" + sourceProject.name + "'. ");
+                string.Format(ParrelSyncLocalization.Text("Cloning Project Library '{0}'. ", "正在克隆“{0}”的 Library。 "), sourceProject.name));
             Debug.Log("Packages copy: " + cloneProject.libraryPath);
             ClonesManager.CopyDirectoryWithProgressBar(sourceProject.packagesPath, cloneProject.packagesPath,
-              "Cloning Project Packages '" + sourceProject.name + "'. ");
+                string.Format(ParrelSyncLocalization.Text("Cloning Project Packages '{0}'. ", "正在克隆“{0}”的 Packages。 "), sourceProject.name));
 
 
             //Link Folders
@@ -319,7 +319,7 @@ namespace ParrelSync
 
             Debug.Log("Library copy: " + destinationProject.libraryPath);
             ClonesManager.CopyDirectoryWithProgressBar(sourceProject.libraryPath, destinationProject.libraryPath,
-                "Cloning project '" + sourceProject.name + "'. ");
+                string.Format(ParrelSyncLocalization.Text("Cloning project '{0}'. ", "正在克隆项目“{0}”。 "), sourceProject.name));
         }
 
         #endregion
@@ -595,8 +595,10 @@ namespace ParrelSync
                 /// Display the progress bar.
                 float progress = (float)copiedBytes / (float)totalBytes;
                 bool cancelCopy = EditorUtility.DisplayCancelableProgressBar(
-                    progressBarPrefix + "Copying '" + source.FullName + "' to '" + destination.FullName + "'...",
-                    "(" + (progress * 100f).ToString("F2") + "%) Copying file '" + file.Name + "'...",
+                    progressBarPrefix + string.Format(ParrelSyncLocalization.Text(
+                        "Copying '{0}' to '{1}'...", "正在复制“{0}”到“{1}”……"), source.FullName, destination.FullName),
+                    "(" + (progress * 100f).ToString("F2") + "%) " + string.Format(ParrelSyncLocalization.Text(
+                        "Copying file '{0}'...", "正在复制文件“{0}”……"), file.Name),
                     progress);
                 if (cancelCopy) return;
             }
@@ -620,8 +622,9 @@ namespace ParrelSync
         private static long GetDirectorySize(DirectoryInfo directory, bool includeNested = false,
             string progressBarPrefix = "")
         {
-            EditorUtility.DisplayProgressBar(progressBarPrefix + "Calculating size of directories...",
-                "Scanning '" + directory.FullName + "'...", 0f);
+            EditorUtility.DisplayProgressBar(progressBarPrefix + ParrelSyncLocalization.Text(
+                "Calculating size of directories...", "正在统计目录大小……"),
+                string.Format(ParrelSyncLocalization.Text("Scanning '{0}'...", "正在扫描“{0}”……"), directory.FullName), 0f);
 
             /// Calculate size of all files in directory.
             long filesSize = directory.GetFiles().Sum((FileInfo file) => file.Exists ? file.Length : 0);

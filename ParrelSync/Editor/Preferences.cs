@@ -93,11 +93,11 @@ namespace ParrelSync
     }
     public class Preferences : EditorWindow
     {
-        [MenuItem("ParrelSync/Preferences", priority = 1)]
-        private static void InitWindow()
+        internal static void InitWindow()
         {
             Preferences window = (Preferences)EditorWindow.GetWindow(typeof(Preferences));
-            window.titleContent = new GUIContent(ClonesManager.ProjectName + " Preferences");
+            window.titleContent = new GUIContent(ClonesManager.ProjectName + " " +
+                ParrelSyncLocalization.Text("Preferences", "偏好设置"));
             window.minSize = new Vector2(550, 300);
             window.Show();
         }
@@ -122,32 +122,39 @@ namespace ParrelSync
         
         private void OnGUI()
         {
-            if (GUILayout.Button("Restore asset saving warning"))
+            if (GUILayout.Button(ParrelSyncLocalization.Text(
+                "Restore asset saving warning", "恢复资产保存警告")))
             {
                 EditorUtility.SetDialogOptOutDecision(DialogOptOutDecisionType.ForThisMachine,
                     ParrelSyncAssetModificationProcessor.WarningOptOutKey, false);
             }
-            EditorGUILayout.HelpBox(
-                "Dialog opt-out settings are shared by all editors on this machine. " +
-                "Hiding the warning does not allow asset saving and does not suppress the Console log.",
+            EditorGUILayout.HelpBox(ParrelSyncLocalization.Text(
+                "Language and dialog opt-out settings are shared by editors on this machine. Hiding the warning does not allow asset saving or suppress Console logs.",
+                "语言和“不再提示”设置由本机编辑器共享。隐藏警告不会允许保存，也不会关闭控制台日志。"),
                 MessageType.Info);
 
             if (ClonesManager.IsClone())
             {
                 EditorGUILayout.HelpBox(
-                        "This is a clone project. Please use the original project editor to change preferences.",
+                        ParrelSyncLocalization.Text(
+                            "This is a clone project. Please use the original project editor to change preferences.",
+                            "当前项目是克隆，请在主项目编辑器中修改以下偏好设置。"),
                         MessageType.Info);
                 return;
             }
 
             GUILayout.BeginVertical("HelpBox");
-            GUILayout.Label("Preferences");
+            GUILayout.Label(ParrelSyncLocalization.Text("Preferences", "偏好设置"));
             GUILayout.BeginVertical("GroupBox");
 
             AssetModPref.Value = EditorGUILayout.ToggleLeft(
                 new GUIContent(
-                    "(recommended) Disable asset saving in clone editors- require re-open clone editors",
-                    "Disable asset saving in clone editors so all assets can only be modified from the original project editor"
+                    ParrelSyncLocalization.Text(
+                        "(recommended) Disable asset saving in clone editors- require re-open clone editors",
+                        "禁止克隆编辑器保存资产（推荐；修改后需重新打开克隆）"),
+                    ParrelSyncLocalization.Text(
+                        "Disable asset saving in clone editors so all assets can only be modified from the original project editor",
+                        "阻止克隆编辑器保存共享资产，确保只从主项目编辑器修改资产。")
                 ),
                 AssetModPref.Value);
 
@@ -155,16 +162,20 @@ namespace ParrelSync
             {
                 AlsoCheckUnityLockFileStaPref.Value = EditorGUILayout.ToggleLeft(
                     new GUIContent(
-                        "Also check UnityLockFile lock status while checking clone projects running status",
-                        "Disable this can slightly increase Clones Manager window performance, but will lead to in-correct clone project running status" +
-                        "(the Clones Manager window show the clone project is still running even it's not) if the clone editor crashed"
+                        ParrelSyncLocalization.Text(
+                            "Also check UnityLockFile lock status while checking clone projects running status",
+                            "判断克隆是否运行时，同时检查 UnityLockFile 的锁定状态"),
+                        ParrelSyncLocalization.Text(
+                            "Disable this can slightly increase Clones Manager window performance, but will lead to in-correct clone project running status" +
+                            "(the Clones Manager window show the clone project is still running even it's not) if the clone editor crashed",
+                            "关闭可略微提高窗口效率，但克隆编辑器崩溃后可能仍被误判为运行中。")
                     ),
                     AlsoCheckUnityLockFileStaPref.Value);
             }
             GUILayout.EndVertical();
 
             GUILayout.BeginVertical("GroupBox");
-            GUILayout.Label("Optional Folders to Symbolically Link");
+            GUILayout.Label(ParrelSyncLocalization.Text("Optional Folders to Symbolically Link", "额外共享目录（目录链接）"));
             GUILayout.Space(5);
 
             // cache the current value
@@ -182,9 +193,10 @@ namespace ParrelSync
             {
                 GUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField(optionalFolderPaths[i], EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
-                if (GUILayout.Button("Select Folder", GUILayout.Width(100)))
+                if (GUILayout.Button(ParrelSyncLocalization.Text("Select Folder", "选择目录"), GUILayout.Width(100)))
                 {
-                    var result = EditorUtility.OpenFolderPanel("Select Folder to Symbolically Link...", "", "");
+                    var result = EditorUtility.OpenFolderPanel(ParrelSyncLocalization.Text(
+                        "Select Folder to Symbolically Link...", "选择要共享的项目内目录"), "", "");
                     if (result.Contains(projectPath))
                     {
                         optionalFolderPaths[i] = result.Replace(projectPath,"");
@@ -192,10 +204,11 @@ namespace ParrelSync
                     }
                     else if( result != "")
                     {
-                        Debug.LogWarning("Symbolic Link folder must be within the project directory");
+                        Debug.LogWarning(ParrelSyncLocalization.Text(
+                            "Symbolic Link folder must be within the project directory", "共享目录必须位于项目目录内。"));
                     }
                 }
-                if (GUILayout.Button("Clear", GUILayout.Width(100)))
+                if (GUILayout.Button(ParrelSyncLocalization.Text("Clear", "清除"), GUILayout.Width(100)))
                 {
                     optionalFolderPaths[i] = "";
                     optionalFolderPathsAreDirty = true;
@@ -212,7 +225,7 @@ namespace ParrelSync
             
             GUILayout.EndVertical();
             
-            if (GUILayout.Button("Reset to default"))
+            if (GUILayout.Button(ParrelSyncLocalization.Text("Reset to default", "恢复默认设置")))
             {
                 AssetModPref.ClearValue();
                 AlsoCheckUnityLockFileStaPref.ClearValue();

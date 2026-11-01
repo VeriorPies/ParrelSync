@@ -17,11 +17,10 @@ namespace ParrelSync
             get { return ClonesManager.GetCloneProjectsPath().Count >= 1; }
         }
 
-        [MenuItem("ParrelSync/Clones Manager", priority = 0)]
-        private static void InitWindow()
+        internal static void InitWindow()
         {
             ClonesManagerWindow window = (ClonesManagerWindow)EditorWindow.GetWindow(typeof(ClonesManagerWindow));
-            window.titleContent = new GUIContent("Clones Manager");
+            window.titleContent = new GUIContent(ParrelSyncLocalization.Text("Clones Manager", "克隆管理器"));
             window.Show();
         }
 
@@ -41,20 +40,25 @@ namespace ParrelSync
                 {
                     /// If original project cannot be found, display warning message.
                     EditorGUILayout.HelpBox(
-                        "This project is a clone, but the link to the original seems lost.\nYou have to manually open the original and create a new clone instead of this one.\n",
+                        ParrelSyncLocalization.Text(
+                            "This project is a clone, but the link to the original seems lost.\nYou have to manually open the original and create a new clone instead of this one.\n",
+                            "当前项目是克隆，但无法找到主项目。\n请手动打开主项目并重新创建克隆。\n"),
                         MessageType.Warning);
                 }
                 else
                 {
                     /// If original project is present, display some usage info.
                     EditorGUILayout.HelpBox(
-                        "This project is a clone of the project '" + Path.GetFileName(originalProjectPath) + "'.\nIf you want to make changes the project files or manage clones, please open the original project through Unity Hub.",
+                        string.Format(ParrelSyncLocalization.Text(
+                            "This project is a clone of '{0}'.\nTo modify project files or manage clones, open the original project through Unity Hub.",
+                            "当前项目是“{0}”的克隆。\n如需修改项目文件或管理克隆，请通过 Hub 打开主项目。"),
+                            Path.GetFileName(originalProjectPath)),
                         MessageType.Info);
                 }
 
                 //Clone project custom argument.
                 GUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField("Arguments", GUILayout.Width(70));
+                EditorGUILayout.LabelField(ParrelSyncLocalization.Text("Arguments", "启动参数"), GUILayout.Width(70));
                 if (GUILayout.Button("?", GUILayout.Width(20)))
                 {
                     Application.OpenURL(ExternalLinks.CustomArgumentHelpLink);
@@ -78,7 +82,7 @@ namespace ParrelSync
                 }
                 else
                 {
-                    EditorGUILayout.LabelField("No argument file found.");
+                    EditorGUILayout.LabelField(ParrelSyncLocalization.Text("No argument file found.", "未找到参数文件。"));
                 }
             }
             else// If it is an original project...
@@ -86,7 +90,7 @@ namespace ParrelSync
                 if (isCloneCreated)
                 {
                     GUILayout.BeginVertical("HelpBox");
-                    GUILayout.Label("Clones of this Project");
+                    GUILayout.Label(ParrelSyncLocalization.Text("Clones of this Project", "当前项目的克隆"));
 
                     //List all clones
                     clonesScrollPos =
@@ -101,21 +105,22 @@ namespace ParrelSync
                         bool isOpenInAnotherInstance = ClonesManager.IsCloneProjectRunning(cloneProjectPath);
 
                         if (isOpenInAnotherInstance == true)
-                            EditorGUILayout.LabelField("Clone " + i + " (Running)", EditorStyles.boldLabel);
+                            EditorGUILayout.LabelField(ParrelSyncLocalization.Text("Clone ", "克隆 ") + i +
+                                ParrelSyncLocalization.Text(" (Running)", "（运行中）"), EditorStyles.boldLabel);
                         else
-                            EditorGUILayout.LabelField("Clone " + i);
+                            EditorGUILayout.LabelField(ParrelSyncLocalization.Text("Clone ", "克隆 ") + i);
 
 
                         GUILayout.BeginHorizontal();
-                        EditorGUILayout.TextField("Clone project path", cloneProjectPath, EditorStyles.textField);
-                        if (GUILayout.Button("View Folder", GUILayout.Width(80)))
+                        EditorGUILayout.TextField(ParrelSyncLocalization.Text("Clone project path", "克隆项目路径"), cloneProjectPath, EditorStyles.textField);
+                        if (GUILayout.Button(ParrelSyncLocalization.Text("View Folder", "打开目录"), GUILayout.Width(80)))
                         {
                             ClonesManager.OpenProjectInFileExplorer(cloneProjectPath);
                         }
                         GUILayout.EndHorizontal();
 
                         GUILayout.BeginHorizontal();
-                        EditorGUILayout.LabelField("Arguments", GUILayout.Width(70));
+                        EditorGUILayout.LabelField(ParrelSyncLocalization.Text("Arguments", "启动参数"), GUILayout.Width(70));
                         if (GUILayout.Button("?", GUILayout.Width(20)))
                         {
                             Application.OpenURL(ExternalLinks.CustomArgumentHelpLink);
@@ -139,7 +144,7 @@ namespace ParrelSync
                         }
                         else
                         {
-                            EditorGUILayout.LabelField("No argument file found.");
+                            EditorGUILayout.LabelField(ParrelSyncLocalization.Text("No argument file found.", "未找到参数文件。"));
                         }
 
                         EditorGUILayout.Space();
@@ -149,25 +154,26 @@ namespace ParrelSync
 
                         EditorGUI.BeginDisabledGroup(isOpenInAnotherInstance);
 
-                        if (GUILayout.Button("Open in New Editor"))
+                        if (GUILayout.Button(ParrelSyncLocalization.Text("Open in New Editor", "在新编辑器中打开")))
                         {
                             ClonesManager.OpenProject(cloneProjectPath);
                         }
 
                         GUILayout.BeginHorizontal();
-                        if (GUILayout.Button("Delete"))
+                        if (GUILayout.Button(ParrelSyncLocalization.Text("Delete", "删除")))
                         {
                             bool delete = EditorUtility.DisplayDialog(
-                                "Delete the clone?",
-                                "Are you sure you want to delete the clone project '" + ClonesManager.GetCurrentProject().name + "_clone'?",
-                                "Delete",
-                                "Cancel");
+                                ParrelSyncLocalization.Text("Delete the clone?", "删除克隆？"),
+                                string.Format(ParrelSyncLocalization.Text(
+                                    "Are you sure you want to delete the clone project '{0}'?",
+                                    "确定要删除克隆项目“{0}”吗？"), Path.GetFileName(cloneProjectPath)),
+                                ParrelSyncLocalization.Text("Delete", "删除"),
+                                ParrelSyncLocalization.Text("Cancel", "取消"));
                             if (delete)
                             {
                                 ClonesManager.DeleteClone(cloneProjectPath);
                             }
                         }
-
                         GUILayout.EndHorizontal();
                         EditorGUI.EndDisabledGroup();
                         GUILayout.EndVertical();
@@ -175,7 +181,7 @@ namespace ParrelSync
                     }
                     EditorGUILayout.EndScrollView();
 
-                    if (GUILayout.Button("Add new clone"))
+                    if (GUILayout.Button(ParrelSyncLocalization.Text("Add new clone", "添加克隆")))
                     {
                         ClonesManager.CreateCloneFromCurrent();
                     }
@@ -186,8 +192,9 @@ namespace ParrelSync
                 else
                 {
                     /// If no clone created yet, we must create it.
-                    EditorGUILayout.HelpBox("No project clones found. Create a new one!", MessageType.Info);
-                    if (GUILayout.Button("Create new clone"))
+                    EditorGUILayout.HelpBox(ParrelSyncLocalization.Text(
+                        "No project clones found. Create a new one!", "尚未创建克隆，请创建一个新克隆。"), MessageType.Info);
+                    if (GUILayout.Button(ParrelSyncLocalization.Text("Create new clone", "创建克隆")))
                     {
                         ClonesManager.CreateCloneFromCurrent();
                     }

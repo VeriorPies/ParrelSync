@@ -84,7 +84,7 @@ namespace ParrelSync
             optionalFolderPaths.Add("");
 
             GUILayout.BeginVertical("GroupBox");
-            GUILayout.Label(Styles.SymlinkSectionHeading);
+            GUILayout.Label(ParrelSyncLocalization.Text(Styles.SymlinkSectionHeading.text, "额外共享目录（目录链接）"));
             GUILayout.Space(5);
             var projectPath = ClonesManager.GetCurrentProjectPath();
             var optionalFolderPathsIsDirty = false;
@@ -92,9 +92,10 @@ namespace ParrelSync
             {
                 GUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField(optionalFolderPaths[i], EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
-                if (GUILayout.Button("Select", GUILayout.Width(60)))
+                if (GUILayout.Button(ParrelSyncLocalization.Text("Select", "选择"), GUILayout.Width(60)))
                 {
-                    var result = EditorUtility.OpenFolderPanel("Select Folder to Symbolically Link...", "", "");
+                    var result = EditorUtility.OpenFolderPanel(ParrelSyncLocalization.Text(
+                        "Select Folder to Symbolically Link...", "选择要共享的项目内目录"), "", "");
                     if (result.Contains(projectPath))
                     {
                         optionalFolderPaths[i] = result.Replace(projectPath, "");
@@ -102,10 +103,11 @@ namespace ParrelSync
                     }
                     else if (result != "")
                     {
-                        Debug.LogWarning("Symbolic Link folder must be within the project directory");
+                        Debug.LogWarning(ParrelSyncLocalization.Text(
+                            "Symbolic Link folder must be within the project directory", "共享目录必须位于项目目录内。"));
                     }
                 }
-                if (GUILayout.Button("Clear", GUILayout.Width(60)))
+                if (GUILayout.Button(ParrelSyncLocalization.Text("Clear", "清除"), GUILayout.Width(60)))
                 {
                     optionalFolderPaths[i] = "";
                     optionalFolderPathsIsDirty = true;
@@ -133,7 +135,10 @@ namespace ParrelSync
         {
             return new ParrelSyncSettingsProvider(MenuLocationInProjectSettings, SettingsScope.Project)
             {
-                keywords = GetSearchKeywordsFromGUIContentProperties<Styles>()
+                keywords = new HashSet<string>(GetSearchKeywordsFromGUIContentProperties<Styles>())
+                {
+                    "共享目录", "符号链接", "语言", "中文"
+                }
             };
         }
     }
