@@ -108,6 +108,11 @@ namespace ParrelSync
         public static BoolPreference AssetModPref = new BoolPreference("ParrelSync_DisableClonesAssetSaving", true);
 
         /// <summary>
+        /// Show a popup in clone editors when asset saving is blocked?
+        /// </summary>
+        public static BoolPreference ShowAssetModBlockedDialogPref = new BoolPreference("ParrelSync_ShowAssetModBlockedDialog", true);
+
+        /// <summary>
         /// In addition of checking the existence of UnityLockFile, 
         /// also check is the is the UnityLockFile being opened.
         /// </summary>
@@ -140,6 +145,16 @@ namespace ParrelSync
                     "Disable asset saving in clone editors so all assets can only be modified from the original project editor"
                 ),
                 AssetModPref.Value);
+
+            using (new EditorGUI.DisabledScope(!AssetModPref.Value))
+            {
+                ShowAssetModBlockedDialogPref.Value = EditorGUILayout.ToggleLeft(
+                    new GUIContent(
+                        "Show a popup in clone editors when asset saving is blocked",
+                        "Uncheck to stop showing the \"Asset modifications saving detected and blocked\" popup. Blocked saves are still logged to the console"
+                    ),
+                    ShowAssetModBlockedDialogPref.Value);
+            }
 
             if (Application.platform == RuntimePlatform.WindowsEditor)
             {
@@ -205,6 +220,7 @@ namespace ParrelSync
             if (GUILayout.Button("Reset to default"))
             {
                 AssetModPref.ClearValue();
+                ShowAssetModBlockedDialogPref.ClearValue();
                 AlsoCheckUnityLockFileStaPref.ClearValue();
                 OptionalSymbolicLinkFolders.ClearStoredValue();
                 Debug.Log("Editor preferences cleared");
